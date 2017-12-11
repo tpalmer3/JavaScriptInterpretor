@@ -12,6 +12,8 @@ public class AdvancedMathOps {
 	@JSRunnable
 	public double sqrt(double a) {return Math.sqrt(a);}
 	
+	@JSRunnable
+	public double pow(double a, double b) {return Math.pow(a, b);}
 	
 	
 	

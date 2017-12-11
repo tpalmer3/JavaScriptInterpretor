@@ -91,6 +91,7 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("'Hello, World!';"));
         System.out.println(runScriptWithReturn("advMath.square(10);"));
         System.out.println(runScriptWithReturn("advMath.sqrt(100);"));
+        System.out.println(runScriptWithReturn("advMath.pow(2,3);"));
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
     }
