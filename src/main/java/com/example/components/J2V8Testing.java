@@ -17,9 +17,15 @@ public class J2V8Testing {
 		V8Object person = runtime.getObject("person");
 		V8Object hockeyTeam = person.getObject("hockeyTeam");
 		System.out.println(hockeyTeam.getString("name"));
+		runtime.executeScript("console.log('hello, world');");
+        runtime.executeScript("console.log(console.add(1,2));");
+        System.out.println(runtime.executeScript("math.pi;"));
+        System.out.println(runtime.executeScript("math.add(1,2);"));
+        System.out.println(runtime.executeScript("'Hello, World!';"));
 		person.release();
 		hockeyTeam.release();
 		runtime.release();
+
 	}
 
 }
