@@ -1,4 +1,4 @@
-package com.example.components;
+package com.example.controllers;
 
 import com.eclipsesource.v8.*;
 import com.example.annotations.JSComponent;
@@ -7,11 +7,15 @@ import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Scanner;
 import java.util.Set;
 
+@RestController
 public class ScriptRunner {
 
     private static ScriptRunner runner = new ScriptRunner();
@@ -80,15 +84,23 @@ public class ScriptRunner {
     }
 
     public static void testV8() {
-        v8.executeScript("console.log('hello, world');");
-        v8.executeScript("console.log(console.add(1,2));");
-        System.out.println(v8.executeScript("math.pi;"));
-        System.out.println(v8.executeScript("math.add(1,2);"));
-        System.out.println(v8.executeScript("'Hello, World!';"));
+        runScript("console.log('hello, world');");
+        runScript("console.log(console.add(1,2));");
+        System.out.println(runScriptWithReturn("math.pi;"));
+        System.out.println(runScriptWithReturn("math.add(1,2);"));
+        System.out.println(runScriptWithReturn("'Hello, World!';"));
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
     }
 
-    @RequestMapping(path="/run_script/{fileName}")
+    @RequestMapping(path="/run_script/{script}")
     public static void runScript(@PathVariable String s) {
+        v8.executeScript(s);
+    }
+
+    @RequestMapping(path="/run_script_with_return/{script}")
+    public static String runScriptWithReturn(@PathVariable String s) {
+        return v8.executeScript(s).toString();
     }
 
     public static void main(String args[]) {testV8();}
