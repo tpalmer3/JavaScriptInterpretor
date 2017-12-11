@@ -18,5 +18,14 @@ public class StringOps {
 	@JSRunnable
 	public String lower(String s) {return s.toLowerCase();}
 	
+	@JSRunnable
+	public String reverse(String s) {
+		StringBuilder reversedString = new StringBuilder(s);
+		reversedString.reverse();
+		String newString = reversedString.toString();
+		return newString;
+	}
+	
+	
 
 }

@@ -96,6 +96,7 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("string.substring('Testing',1,5);"));
         System.out.println(runScriptWithReturn("string.upper('test');"));
         System.out.println(runScriptWithReturn("string.lower('TEST');"));
+        System.out.println(runScriptWithReturn("string.reverse('Test');"));
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
     }
