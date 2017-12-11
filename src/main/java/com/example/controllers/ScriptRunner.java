@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ScriptRunner {
 
     private static V8 v8 = V8.createV8Runtime();
-
+    
     @RequestMapping(path="/run_script/")
     public static void runScript(String s) {
         //Console console = new Console();
