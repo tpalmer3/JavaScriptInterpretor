@@ -11,5 +11,6 @@ public class Console {
 
     @JSRunnable
     public String add(int a, int b) { return Integer.toString(a+b); }
+    
 
 }
