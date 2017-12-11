@@ -1,7 +1,9 @@
 package com.example.components;
 
+import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 
+@JSComponent
 public class Console {
 
     @JSRunnable
