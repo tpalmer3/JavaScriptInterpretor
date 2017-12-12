@@ -5,7 +5,6 @@ import com.eclipsesource.v8.utils.MemoryManager;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
-import com.example.memory.ReferenceMemory;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -121,7 +120,7 @@ public class ScriptRunner {
     }
 
     public static void testV8() {
-    	
+    	System.out.println(runScriptWithReturn("random.fillArray(3);"));
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
         System.out.println(runScriptWithReturn("var x = 25;x;"));
@@ -139,8 +138,6 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("stringlib.upper('test');"));
         System.out.println(runScriptWithReturn("stringlib.lower('TEST');"));
         System.out.println(runScriptWithReturn("stringlib.reverse('Test');"));
-        System.out.println(runScriptWithReturn("compare.sortValues([1,2,3,4])"));
-        System.out.println(runScriptWithReturn("compare.max([1,7,9,4,3,12,6])"));
         System.out.println(runScriptWithReturn("'Test'.split('').reverse().join('');"));
         System.out.println(runScriptWithReturn("'Test'.split('')[2];"));
         System.out.println(runScriptWithReturn("x+2;"));
