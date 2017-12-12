@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.el.MethodNotFoundException;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Scanner;
 import java.util.Set;
@@ -28,6 +31,8 @@ public class ScriptRunner {
         log = Logger.getLogger(ScriptRunner.class.getName());
         v8 = V8.createV8Runtime();
         this.Initializer("com.example.components");
+        this.register(java.lang.String.class, "string", false);
+        this.register(java.lang.Math.class, "math", false);
     }
 
     public ScriptRunner getScriptRunner() {return runner;}
@@ -44,51 +49,77 @@ public class ScriptRunner {
 
     public void register(Class c) {register(c, c.getSimpleName().toLowerCase());}
 
-    public void register(Class c, String name) {
+    public void register(Class c, String name) { register(c,name,true);}
+
+    private void register(Class c, String name, boolean annotationNeaded) {
         V8Object obj = new V8Object(v8);
         v8.add(name, obj);
         log.debug(c.getName() + " start registration as: " + name);
 
+        Object o = new Object();
+
         try {
-            Object o = c.newInstance();
-
-            for (Method m : c.getDeclaredMethods()) {
-                if(m.isAnnotationPresent(JSRunnable.class)) {
-                    obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
-                    log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() +")\n\thas been registered for object: " + name);
-                }
-            }
-
-            for (Field f : c.getDeclaredFields()) {
-                if(f.isAnnotationPresent(JSComponent.class)) {
-                    Class c2 = f.getType();
-                    Object val = f.get(o);
-                    if(c2 == String.class)
-                        obj.add(f.getName(), val.toString());
-                    else if(c2.isPrimitive() && val instanceof Number)
-                        obj.add(f.getName(), (Double)val);
-                    else if(c2.isPrimitive() && val instanceof Boolean)
-                        obj.add(f.getName(), (Boolean)val);
-                    log.debug("field: \"" + f.getName() + "\"\n\tWith a value of: " + val.toString() + "\n\thas been registered for object: " + name);
-                }
-            }
+            o = c.newInstance();
         } catch(IllegalAccessException e) {
+            try {
+                for (Constructor con : c.getConstructors()) {
+                    con.setAccessible(true);
+                    con.newInstance(null);
+                }
+            } catch (InstantiationException e2) {
+                e2.printStackTrace();
+            } catch (IllegalAccessException e2) {
+                e2.printStackTrace();
+            } catch (InvocationTargetException e2) {
+                e2.printStackTrace();
+            }
+        } catch (InstantiationException e) {
             e.printStackTrace();
-        } catch(InstantiationException e) {
-            e.printStackTrace();
+        }
+
+        for (Method m : c.getDeclaredMethods()) {
+            if(m.isAnnotationPresent(JSRunnable.class) || !annotationNeaded) {
+                try{
+                    m.setAccessible(true);
+                    obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
+                    log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
+                }catch(RuntimeException e) {}
+            }
+        }
+
+        for (Field f : c.getDeclaredFields()) {
+            if(f.isAnnotationPresent(JSComponent.class) || !annotationNeaded) {
+                f.setAccessible(true);
+                Class c2 = f.getType();
+                Object val = new Object();
+                try {
+                    val = f.get(o);
+                } catch(IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if(c2 == String.class)
+                    obj.add(f.getName(), val.toString());
+                else if(c2.isPrimitive() && val instanceof Number) {
+                    if(val instanceof Double)
+                        obj.add(f.getName(), (Double) val);
+                    else if(val instanceof Integer)
+                        obj.add(f.getName(), (Integer) val);
+                } else if(c2.isPrimitive() && val instanceof Boolean)
+                    obj.add(f.getName(), (Boolean)val);
+                log.debug("field: \"" + f.getName() + "\"\n\tWith a value of: " + val.toString() + "\n\thas been registered for object: " + name);
+            }
         }
         obj.release();
         log.debug(c.getName() + " has been registered as: " + name);
-
-
     }
 
     public static void testV8() {
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
-        System.out.println(runScriptWithReturn("math.pi;"));
-        System.out.println(runScriptWithReturn("math.add(1,2);"));
+        System.out.println(runScriptWithReturn("math.PI + 2;"));
+        System.out.println(runScriptWithReturn("math.E;"));
         System.out.println(runScriptWithReturn("'Hello, World!';"));
+        System.out.println(runScriptWithReturn("string.format('%dHello, World!', 23);"));
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
     }
