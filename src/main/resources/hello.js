@@ -15,7 +15,5 @@ function fillArray(x){
 
 	return array;
 }
-
-
-var x = fillArray(4);
-x
+var myVar = fillArray(4);
+myVar;
