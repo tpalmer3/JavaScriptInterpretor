@@ -1,25 +1,19 @@
 package com.example.controllers;
 
 import com.eclipsesource.v8.*;
-import com.eclipsesource.v8.utils.MemoryManager;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
-import com.example.memory.ReferenceMemory;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.el.MethodNotFoundException;
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.Set;
 
 @RestController
