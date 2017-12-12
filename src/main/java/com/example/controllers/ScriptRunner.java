@@ -4,6 +4,7 @@ import com.eclipsesource.v8.*;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
+import com.example.components.TimeOps;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -151,29 +152,29 @@ public class ScriptRunner {
 
     @RequestMapping(path="/run_script/{script}")
     public static void runScript(@PathVariable String s) {
-        v8.executeScript(s);
+        runScriptWithReturn(s);
     }
 
     @RequestMapping(path="/run_script_with_return/{script}")
-    public static String runScriptWithReturn(@PathVariable String s) {
-        return "" + v8.executeScript(s);
-//        return runScriptWithReturn(s, false);
+    public static synchronized String runScriptWithReturn(@PathVariable String s) {
+        V8Locker locker = v8.getLocker();
+        String ret = "";
+
+        boolean flag = true;
+        while(flag) {
+            try {
+
+                locker.acquire();
+                ret += v8.executeScript(s);
+                locker.release();
+
+                flag = false;
+
+            } catch(Error e) {}
+        }
+
+        return ret;
     }
-//    public static String runScriptWithReturn(@PathVariable String s, boolean process) {
-//        if(process)
-//            s = processInput(s);
-//        return "" + v8.executeScript(s);
-//    }
-//
-//    private static String processInput(String s) {
-//        String out = "";
-//        for(char c: s.toCharArray())
-//            if(c == '\\')
-//                out += "\\\\";
-//            else
-//                out += c;
-//        return out;
-//    }
 
     public static void main(String args[]) {testV8();}
 }
