@@ -34,6 +34,8 @@ public class ScriptRunner {
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
 
+        v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
+
         v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
     }
 
@@ -139,6 +141,7 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("x+2;"));
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
+
         CLI.run();
 
     }
@@ -151,7 +154,23 @@ public class ScriptRunner {
     @RequestMapping(path="/run_script_with_return/{script}")
     public static String runScriptWithReturn(@PathVariable String s) {
         return "" + v8.executeScript(s);
+//        return runScriptWithReturn(s, false);
     }
+//    public static String runScriptWithReturn(@PathVariable String s, boolean process) {
+//        if(process)
+//            s = processInput(s);
+//        return "" + v8.executeScript(s);
+//    }
+//
+//    private static String processInput(String s) {
+//        String out = "";
+//        for(char c: s.toCharArray())
+//            if(c == '\\')
+//                out += "\\\\";
+//            else
+//                out += c;
+//        return out;
+//    }
 
     public static void main(String args[]) {testV8();}
 }
