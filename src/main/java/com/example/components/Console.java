@@ -7,9 +7,14 @@ import com.example.annotations.JSRunnable;
 @JSComponent
 public class Console {
 
+//    @JSRunnable
+//    public void log(final String message) {
+//        System.out.println("> " + message);
+//    }
+
     @JSRunnable
-    public void log(final String message) {
-        System.out.println("> " + message);
+    public void log(Object out) {
+        print("> " + out);
     }
 
     @JSRunnable
