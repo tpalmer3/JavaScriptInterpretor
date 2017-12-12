@@ -1,5 +1,8 @@
 package com.example.controllers;
 
+import com.example.components.TimeOps;
+
+import java.sql.Time;
 import java.util.Scanner;
 
 public class CLI {
@@ -34,6 +37,7 @@ public class CLI {
                 input = "";
             }
         }
+        TimeOps.stopAll();
     }
 
     private static boolean balanced(String s) {
