@@ -7,10 +7,7 @@ import com.example.annotations.JSRunnable;
 
 @JSComponent(name = "random")
 public class RandomTester {
-	
-	
-	
-	
+
 	@JSRunnable
 	public long fillArray(int a) {
 		Random rand = new Random();

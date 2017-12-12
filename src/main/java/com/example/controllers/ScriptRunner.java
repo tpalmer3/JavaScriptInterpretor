@@ -1,7 +1,6 @@
 package com.example.controllers;
 
 import com.eclipsesource.v8.*;
-import com.eclipsesource.v8.utils.MemoryManager;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
@@ -11,14 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.el.MethodNotFoundException;
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.Set;
 
 @RestController
@@ -35,8 +30,11 @@ public class ScriptRunner {
         v8 = V8.createV8Runtime();
 
         this.Initializer("com.example.components");
+        this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
+
+        v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
         v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
     }
@@ -143,7 +141,8 @@ public class ScriptRunner {
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\hello.js"));
-        //CLI.run();
+        CLI.run();
+
 
     }
 
@@ -154,10 +153,24 @@ public class ScriptRunner {
 
     @RequestMapping(path="/run_script_with_return/{script}")
     public static String runScriptWithReturn(@PathVariable String s) {
-//        exe.postMessage(s);
-
-        return "" + v8.executeScript(s);//exe.getResult();
+        return "" + v8.executeScript(s);
+//        return runScriptWithReturn(s, false);
     }
+//    public static String runScriptWithReturn(@PathVariable String s, boolean process) {
+//        if(process)
+//            s = processInput(s);
+//        return "" + v8.executeScript(s);
+//    }
+//
+//    private static String processInput(String s) {
+//        String out = "";
+//        for(char c: s.toCharArray())
+//            if(c == '\\')
+//                out += "\\\\";
+//            else
+//                out += c;
+//        return out;
+//    }
 
     public static void main(String args[]) {testV8();}
 }
