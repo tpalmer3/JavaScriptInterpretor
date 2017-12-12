@@ -14,6 +14,8 @@ public class CLI {
                 System.out.print(">> ");
             else
                 System.out.print(".. ");
+            first = false;
+
             input += " " + in.nextLine().trim();
             input = input.trim();
 
@@ -28,6 +30,7 @@ public class CLI {
                 } catch (RuntimeException e) {
                     System.err.println(e.getMessage());
                 }
+                first = true;
                 input = "";
             }
         }

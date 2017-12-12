@@ -34,7 +34,11 @@ public class FileRunner {
 
             in.close();
 
-            return ScriptRunner.runScriptWithReturn(full);
+            String out = ScriptRunner.runScriptWithReturn(full);
+            if(out.equals("undefined"))
+                out = "";
+
+            return out;
         } catch(FileNotFoundException e ) {
             e.printStackTrace();
         } finally {

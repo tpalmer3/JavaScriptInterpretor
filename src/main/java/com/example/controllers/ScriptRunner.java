@@ -149,9 +149,7 @@ public class ScriptRunner {
 
     @RequestMapping(path="/run_script_with_return/{script}")
     public static String runScriptWithReturn(@PathVariable String s) {
-//        exe.postMessage(s);
-
-        return "" + v8.executeScript(s);//exe.getResult();
+        return "" + v8.executeScript(s);
     }
 
     public static void main(String args[]) {testV8();}

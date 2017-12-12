@@ -1,5 +1,6 @@
 package com.example.components;
 
+import com.eclipsesource.v8.V8Object;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 
@@ -9,6 +10,11 @@ public class Console {
     @JSRunnable
     public void log(final String message) {
         System.out.println("> " + message);
+    }
+
+    @JSRunnable
+    public void print(Object out) {
+        System.out.println(" " + out.toString());
     }
 
     @JSRunnable
