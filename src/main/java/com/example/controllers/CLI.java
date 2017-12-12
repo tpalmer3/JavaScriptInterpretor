@@ -15,6 +15,7 @@ public class CLI {
             else
                 System.out.print(".. ");
             input += " " + in.nextLine().trim();
+            input = input.trim();
 
             if(input.equals("exit()") || input.equals("exit();"))
                 break;
