@@ -84,6 +84,7 @@ public class ScriptRunner {
     }
 
     public static void testV8() {
+    	
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
         System.out.println(runScriptWithReturn("math.pi;"));
