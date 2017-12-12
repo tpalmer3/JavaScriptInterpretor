@@ -12,6 +12,11 @@ public class Console {
     }
 
     @JSRunnable
+    public void clear() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
+    @JSRunnable
     public String add(int a, int b) { return Integer.toString(a+b); }
     
 

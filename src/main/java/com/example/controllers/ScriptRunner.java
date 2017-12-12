@@ -30,6 +30,7 @@ public class ScriptRunner {
         v8 = V8.createV8Runtime();
 
         this.Initializer("com.example.components");
+        this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
 

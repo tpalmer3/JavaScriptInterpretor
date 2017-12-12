@@ -1,22 +1,27 @@
 package com.example.controllers;
 
+import com.example.annotations.JSComponent;
+import com.example.annotations.JSRunnable;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.util.Scanner;
 
 @RestController
+@JSComponent(name="files")
 public class FileRunner {
 
     private static Scanner in;
     private static BufferedWriter out;
 
     @RequestMapping(path="/run_file/{fname}")
+    @JSRunnable
     public static void runFile(@PathVariable String fname) {
         runFileWithReturn(fname);
     }
 
     @RequestMapping(path="/run_file_with_return/{fname}")
+    @JSRunnable
     public static String runFileWithReturn(@PathVariable String fname) {
         File f = new File(fname);
 
