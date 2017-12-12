@@ -1,8 +1,11 @@
 package com.example.controllers;
 
 import com.eclipsesource.v8.*;
+import com.eclipsesource.v8.utils.MemoryManager;
+import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
+import com.example.memory.ReferenceMemory;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -30,9 +34,12 @@ public class ScriptRunner {
     private ScriptRunner() {
         log = Logger.getLogger(ScriptRunner.class.getName());
         v8 = V8.createV8Runtime();
+
         this.Initializer("com.example.components");
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
+
+        v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
     }
 
     public ScriptRunner getScriptRunner() {return runner;}
@@ -116,6 +123,8 @@ public class ScriptRunner {
     public static void testV8() {
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
+        System.out.println(runScriptWithReturn("var x = 25;x;"));
+        System.out.println(runScriptWithReturn("x;"));
         System.out.println(runScriptWithReturn("math.PI + 2;"));
         System.out.println(runScriptWithReturn("math.E;"));
         System.out.println(runScriptWithReturn("'Hello, World!';"));
@@ -123,13 +132,19 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("advMath.square(10);"));
         System.out.println(runScriptWithReturn("advMath.sqrt(100);"));
         System.out.println(runScriptWithReturn("advMath.pow(2,3);"));
-        System.out.println(runScriptWithReturn("string.length('Test');"));
-        System.out.println(runScriptWithReturn("string.substring('Testing',1,5);"));
-        System.out.println(runScriptWithReturn("string.upper('test');"));
-        System.out.println(runScriptWithReturn("string.lower('TEST');"));
-        System.out.println(runScriptWithReturn("string.reverse('Test');"));
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        System.out.println(runScriptWithReturn("stringlib.length('Test');"));
+        System.out.println(runScriptWithReturn("stringlib.substring('Testing',1,5);"));
+        System.out.println(runScriptWithReturn("stringlib.upper('test');"));
+        System.out.println(runScriptWithReturn("stringlib.lower('TEST');"));
+        System.out.println(runScriptWithReturn("stringlib.reverse('Test');"));
+        System.out.println(runScriptWithReturn("compare.sortValues([1,2,3,4])"));
+        System.out.println(runScriptWithReturn("compare.max([1,7,9,4,3,12,6])"));
+        System.out.println(runScriptWithReturn("'Test'.split('').reverse().join('');"));
+        System.out.println(runScriptWithReturn("'Test'.split('')[2];"));
+        System.out.println(runScriptWithReturn("x+2;"));
+        System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
+        CLI.run();
     }
 
     @RequestMapping(path="/run_script/{script}")
@@ -139,7 +154,9 @@ public class ScriptRunner {
 
     @RequestMapping(path="/run_script_with_return/{script}")
     public static String runScriptWithReturn(@PathVariable String s) {
-        return v8.executeScript(s).toString();
+//        exe.postMessage(s);
+
+        return "" + v8.executeScript(s);//exe.getResult();
     }
 
     public static void main(String args[]) {testV8();}
