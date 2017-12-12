@@ -1,8 +1,6 @@
 package com.example.components;
 
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
@@ -11,17 +9,11 @@ import com.example.annotations.JSRunnable;
 public class ComparisonOps {
 
 	
-	//Sort the values
+	
 	@JSRunnable
-	public List<Integer> sortValues(int ... a) {
-		int[] list = a;
-		List<Integer> intList = new ArrayList<Integer>();
-		for(int l: list) {
-			intList.add(l);
-		}
-		intList.stream().distinct();
+	public void findMax(String... a) {
+		System.out.println(1);
 		
-		return null;
 	}
 	
 	
