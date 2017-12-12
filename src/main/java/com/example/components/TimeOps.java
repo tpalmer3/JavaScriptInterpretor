@@ -31,7 +31,6 @@ public class TimeOps extends Thread{
             try {
                 ScriptRunner.runScript("var " + name + " = " + function);
                 ScriptRunner.runScript(name+"()");
-                System.out.println(function);
                 this.sleep(mills);
             } catch (InterruptedException e) {
                 System.err.println("Thread Ended: " + e.getMessage());
@@ -46,7 +45,8 @@ public class TimeOps extends Thread{
 
     @JSRunnable
     public void setNamedInterval(V8Object function, int mills, String name) {
-        to = new TimeOps(function.toString(), "Stored_Threads_Thread_"+name+"_Function", mills);
+        name = "Stored_Threads_Thread_"+name+"_Function";
+        to = new TimeOps(function.toString(), name, mills);
         to.start();
         threads.put(name, to);
     }
@@ -54,5 +54,11 @@ public class TimeOps extends Thread{
     @JSRunnable
     public static void stop(String name) {
         threads.get(name).interrupt();
+    }
+
+    @JSRunnable
+    public static void stopAll() {
+        for(TimeOps t: threads.values())
+            stop(t.name);
     }
 }
