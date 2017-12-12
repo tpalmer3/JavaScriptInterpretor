@@ -116,6 +116,7 @@ public class ScriptRunner {
     }
 
     public static void testV8() {
+    	System.out.println(runScriptWithReturn("random.fillArray(3);"));
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
         System.out.println(runScriptWithReturn("var x = 25;x;"));
@@ -127,19 +128,19 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("advMath.square(10);"));
         System.out.println(runScriptWithReturn("advMath.sqrt(100);"));
         System.out.println(runScriptWithReturn("advMath.pow(2,3);"));
+
         System.out.println(runScriptWithReturn("stringlib.length('Test');"));
         System.out.println(runScriptWithReturn("stringlib.substring('Testing',1,5);"));
         System.out.println(runScriptWithReturn("stringlib.upper('test');"));
         System.out.println(runScriptWithReturn("stringlib.lower('TEST');"));
         System.out.println(runScriptWithReturn("stringlib.reverse('Test');"));
-        System.out.println(runScriptWithReturn("compare.sortValues([1,2,3,4])"));
-        System.out.println(runScriptWithReturn("compare.max([1,7,9,4,3,12,6])"));
         System.out.println(runScriptWithReturn("'Test'.split('').reverse().join('');"));
         System.out.println(runScriptWithReturn("'Test'.split('')[2];"));
         System.out.println(runScriptWithReturn("x+2;"));
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
         CLI.run();
+
     }
 
     @RequestMapping(path="/run_script/{script}")
