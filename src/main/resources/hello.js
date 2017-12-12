@@ -2,18 +2,20 @@
  * 
  */
 
-function sort(data) {
-  if ( data.length === 1 ) {
-    return [data[0]];
-  } else if (data.length === 2 ) {
-    if ( data[1] < data[0] ) {
-      return [data[1],data[0]];
-    } else {
-      return data;
-    }
-  }
-  var mid = Math.floor(data.length / 2);
-  var first = data.slice(0, mid);
-  var second = data.slice(mid);
-  return merge(_sort( first ), _sort( second ) );
-};
+function fillArray(x){
+	var array = [];
+	for(var i = 0; i <= x; i++){
+		while(array[i] === undefined){
+			var y = Math.floor(Math.random() * 1000000) + 1
+			if(y > 900000){
+				array.push(y);
+			}
+		}
+	}
+
+	return array;
+}
+
+
+var x = fillArray(4);
+x

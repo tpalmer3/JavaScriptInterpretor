@@ -120,7 +120,6 @@ public class ScriptRunner {
     }
 
     public static void testV8() {
-    	System.out.println(runScriptWithReturn("random.fillArray(3);"));
         runScript("console.log('hello, world');");
         runScript("console.log(console.add(1,2));");
         System.out.println(runScriptWithReturn("var x = 25;x;"));
@@ -143,7 +142,8 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("x+2;"));
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
-        CLI.run();
+        System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\hello.js"));
+        //CLI.run();
 
     }
 
