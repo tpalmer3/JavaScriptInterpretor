@@ -144,7 +144,7 @@ public class ScriptRunner {
         System.out.println(runScriptWithReturn("'Test'.split('').reverse().join('');"));
         System.out.println(runScriptWithReturn("'Test'.split('')[2];"));
         System.out.println(runScriptWithReturn("x+2;"));
-
+        System.out.println(runScriptWithReturn("compare.findMin(1,2,3);"));
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
         //runScript("run(dir+'redis_setup.js')");
