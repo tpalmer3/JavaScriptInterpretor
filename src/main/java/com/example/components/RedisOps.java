@@ -15,11 +15,15 @@ public class RedisOps {
     private static Jedis jedis = new Jedis();
 
     static {
-        conn.setHost("127.0.0.1");
-        conn.setPort(6379);
-        conn.connect();
-        jedis.connect();
-        log.debug("\nJedis connected: " + jedis.isConnected() + "\n\tConnected to port: " + conn.getPort() + "\n\tTo host: " + conn.getHost() + "\n");
+        try {
+            conn.setHost("127.0.0.1");
+            conn.setPort(6379);
+            conn.connect();
+            jedis.connect();
+            log.debug("\nJedis connected: " + jedis.isConnected() + "\n\tConnected to port: " + conn.getPort() + "\n\tTo host: " + conn.getHost() + "\n");
+        } catch (RuntimeException e) {
+            log.debug("Could not connect to Redis Server \n\tPort: " + conn.getPort() + "\n\tHost: " + conn.getHost());
+        }
     }
 
     public static Jedis getJedis() {return jedis;}
