@@ -13,24 +13,32 @@ public class TimeOps extends Thread{
     private static HashMap<String, TimeOps> threads = new HashMap<>();
     private static int counter;
 
-    TimeOps to;
-    String function;
-    String name;
-    int mills;
+    private TimeOps to;
+    private String function;
+    private String name;
+    private String fullName;
+    private int mills;
+
+    private volatile boolean stopping = false;
+    private boolean initialized = false;
 
     public TimeOps() {}
 
-    private TimeOps(String function, String name, int mills) {
+    private TimeOps(String function, String name, String fullName, int mills) {
         this.function = function;
         this.name = name;
+        this.fullName = fullName;
         this.mills = mills;
     }
 
     public void run() {
-        while(true) {
+        while(!stopping) {
             try {
-                ScriptRunner.runScript("var " + name + " = " + function);
-                ScriptRunner.runScript(name+"()");
+                if (!initialized) {
+                    ScriptRunner.runScript("var " + fullName + " = " + function);
+                    initialized = true;
+                }
+                ScriptRunner.runScript(fullName+"()");
                 this.sleep(mills);
             } catch (InterruptedException e) {
                 System.err.println("Thread Ended: " + e.getMessage());
@@ -45,20 +53,20 @@ public class TimeOps extends Thread{
 
     @JSRunnable
     public void setNamedInterval(V8Object function, int mills, String name) {
-        name = "Stored_Threads_Thread_"+name+"_Function";
-        to = new TimeOps(function.toString(), name, mills);
+        String fullName = "Stored_Threads_Thread_"+name+"_Function";
+        to = new TimeOps(function.toString(), name, fullName, mills);
         to.start();
         threads.put(name, to);
     }
 
     @JSRunnable
-    public static void stop(String name) {
-        threads.get(name).interrupt();
+    public static synchronized void stop(String name) {
+        threads.get(name).stopping = true;
     }
 
     @JSRunnable
-    public static void stopAll() {
+    public static synchronized void stopAll() {
         for(TimeOps t: threads.values())
-            stop(t.name);
+            t.stopping = true;
     }
 }

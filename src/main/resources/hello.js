@@ -17,3 +17,5 @@ function sort(data) {
   var second = data.slice(mid);
   return merge(_sort( first ), _sort( second ) );
 };
+
+console.log("sort function added from hello.js")

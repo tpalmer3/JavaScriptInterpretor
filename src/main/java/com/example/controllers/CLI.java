@@ -31,7 +31,9 @@ public class CLI {
                     if (!output.equals("undefined"))
                         System.out.println(output);
                 } catch (RuntimeException e) {
-                    System.err.println(e.getMessage());
+                    System.err.print(e.getCause() + " : " + e.getMessage() + "\n______________________________\n");
+                    for(StackTraceElement ste : e.getStackTrace())
+                        System.err.println(ste.toString());
                 }
                 first = true;
                 input = "";
@@ -63,7 +65,7 @@ public class CLI {
                 squote_flag = false;
             } else if(c == '\'' && !squote_flag) {
                 count--;
-                dquote_flag = true;
+                squote_flag = true;
             }
         }
         return (count<=0);

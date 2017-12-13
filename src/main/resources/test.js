@@ -4,8 +4,15 @@ console.log(console.add(1,2));
 var x = "JankyAF";
 x;
 
+//setup base functions
 run = files.runFileWithReturn;
-console.log("run(\"C:\\\\Users\\\\t\\\\Desktop\\\\JavaScriptInterpretor\\\\src\\\\main\\\\resources\\\\test.js\")")
+setInterval = timer.setInterval;
+
+function a() {console.log("goodbye");}
+
+console.log(dir+"test.js\")");
+
+bubbleSort([47,4,53,2,3,5,64,234,543,7563,76543,6,7,564756,7,6,456,377]);
 
 function fib(x) {
     if(x <= 1) return 1;
