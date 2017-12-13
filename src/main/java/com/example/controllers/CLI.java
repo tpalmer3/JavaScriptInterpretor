@@ -7,10 +7,14 @@ import java.util.Scanner;
 
 public class CLI {
 
+    private static Scanner in;
+
+    public static Scanner getScanner() {return in;}
+
     public static void run() {
         boolean first = true;
         String input = "", output;
-        Scanner in = new Scanner(System.in);
+        in = new Scanner(System.in);
 
         while(true) {
             if(first)

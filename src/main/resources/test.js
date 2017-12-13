@@ -6,6 +6,7 @@ x;
 
 //setup base functions
 run = files.runFileWithReturn;
+require = run;
 setInterval = timer.setInterval;
 
 function a() {console.log("goodbye");}

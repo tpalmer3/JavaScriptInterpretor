@@ -147,7 +147,8 @@ public class ScriptRunner {
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
 
-        runScript("files.runFileWithReturn(dir+'redis_setup.js')");
+        runScript("run(dir+'redis_setup.js')");
+        runScript("run(dir+'eliza_setup.js')");
 
         CLI.run();
     }
