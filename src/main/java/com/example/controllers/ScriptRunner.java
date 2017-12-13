@@ -4,7 +4,7 @@ import com.eclipsesource.v8.*;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
-import com.example.components.RedisOps;
+//import com.example.components.RedisOps;
 import com.example.components.TimeOps;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
@@ -37,7 +37,7 @@ public class ScriptRunner {
         this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
-        this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis_d", false);
+      //  this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis_d", false);
 
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
@@ -147,7 +147,7 @@ public class ScriptRunner {
 
         System.out.println("Working Directory => " + System.getProperty("user.dir"));
         System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
-        runScript("run(dir+'redis_setup.js')");
+        //runScript("run(dir+'redis_setup.js')");
         runScript("run(dir+'eliza_setup.js')");
 
         CLI.run();
