@@ -3,10 +3,15 @@ package com.example.components;
 import com.eclipsesource.v8.V8Object;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
+import com.example.controllers.CLI;
+
+import java.util.Scanner;
 
 @JSComponent
 public class Console {
 
+
+    Scanner in;
 //    @JSRunnable
 //    public void log(final String message) {
 //        System.out.println("> " + message);
@@ -20,6 +25,13 @@ public class Console {
     @JSRunnable
     public void print(Object out) {
         System.out.println(" " + out.toString());
+    }
+
+    @JSRunnable
+    public String input(String out) {
+        in = CLI.getScanner();
+        System.out.print(out);
+        return in.nextLine().trim();
     }
 
     @JSRunnable

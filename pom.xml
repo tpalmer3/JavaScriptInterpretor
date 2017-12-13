@@ -54,6 +54,14 @@
 			<version>0.9.11</version>
 		</dependency>
 
+<<<<<<< HEAD
+=======
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+>>>>>>> 1a5e1c7fd32ce2a0a23719064dd9e8b7181c9ee9
 
 	</dependencies>
 

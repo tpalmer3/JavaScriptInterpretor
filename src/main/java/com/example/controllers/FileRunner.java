@@ -34,7 +34,7 @@ public class FileRunner {
 
             in.close();
 
-            String out = ScriptRunner.runScriptWithReturn(full);
+            String out = ScriptRunner.runScriptWithReturn(full, false);
             if(out.equals("undefined"))
                 out = "";
 
