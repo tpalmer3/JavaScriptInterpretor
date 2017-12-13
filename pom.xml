@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.eclipsesource.j2v8</groupId>
 			<artifactId>j2v8_win32_x86_64</artifactId>
-			<version>4.6.0</version>
+			<version>4.5.0</version>
 		</dependency>
 
 		<dependency>
@@ -47,6 +47,20 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.11</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
 
 	</dependencies>
 
