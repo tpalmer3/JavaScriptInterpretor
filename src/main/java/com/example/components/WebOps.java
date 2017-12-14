@@ -4,22 +4,16 @@ import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.datatypes.SearchResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import java.awt.Desktop;
 
 @JSComponent(name="web")
 public class WebOps {
@@ -27,7 +21,8 @@ public class WebOps {
 //    Pattern googlePattern = Pattern.compile("a href=\"/url(.*)</a>");
 //    Pattern urlPattern = Pattern.compile("q=(.+)\"");
 //    Pattern titlePattern = Pattern.compile(">(.+)</a>");
-    Pattern bodyPattern = Pattern.compile("(<body.+</body>)");
+//    Pattern aPattern = Pattern.compile("(<a.+</\\a>)");
+    HashMap<Integer, SearchResult> searchResults = new HashMap<>();
 
     @JSRunnable
     public String readPage(String s) {
@@ -63,50 +58,98 @@ public class WebOps {
         }
 
         String html = readPage("https://www.google.com/search?q=" + search.substring(0, search.length()-1) + "&ie=utf-8&oe=utf-8&client=firefox-b-1");
+        String[] htmWTF = html.substring(15,html.length()).trim().replaceAll("\n", "").replaceAll("\r", "").split("<a href=\"/url\\?q=");
 
-        System.out.println(html.substring(15,html.length()));
+//        System.out.println(html.substring(15,html.length()));
 
         ArrayList<SearchResult> results = new ArrayList<>();
-        xmlParse(html.substring(15,html.length()), "a", results, SearchResult.class);
 
-//        Matcher m  = googlePattern.matcher(html);
-//        while(m.matches()) {
-//            String checking = m.group();
-//            System.out.println(checking);
-//
-//            Matcher url_m = urlPattern.matcher(checking);
-//            Matcher title_m = titlePattern.matcher(checking);
-//
-//            results.add(new SearchResult(url_m.group(), title_m.group(),""));
-//        }
+        for(int i = 1; i < htmWTF.length; i++) {
+//                System.out.println(htmWTF[i]htmWTF[i]);
+            try {
+                String[] u = htmWTF[i].split("\"");
+                if (u.length <= 1 || u[1].substring(0, 5).equals("><img"))
+                    continue;
+                String[] t = repair(u).substring(1, repair(u).length()).split("</a>");
+                if (t.length <= 1)
+                    continue;
+                String d = repair(t).substring(1, repair(t).length()).split("<span class=st>")[1].split("</span")[0];
 
-        String ret = "";
-        for(SearchResult sr : results) {
-            ret += sr.toString();
+                SearchResult sr = new SearchResult(u[0].split("&amp")[0], t[0].replaceAll("<b>","").replaceAll("</b>", ""), d);
+                results.add(sr);
+//                System.out.println(sr.toString());
+            } catch(Throwable e) {}
         }
 
+        int count = 1;
+        for(SearchResult sr : results) {
+            searchResults.put(count++, sr);
+        }
+
+        return printResults();
+    }
+
+    @JSRunnable
+    public String printResults() {
+        String ret = "";
+        for(int i = 1; i < searchResults.size(); i++) {
+            ret += i + ".) " + searchResults.get(i).getTitle() + "\n";
+        }
         return ret;
     }
 
-    public void xmlParse(String xml, String tag, List<SearchResult> list, Class c) {
+    @JSRunnable
+    public String getPage(int p) {return readPage(getURL(p));}
+
+    @JSRunnable
+    public String getURL(int p) {return searchResults.get(p).getUrl();}
+
+    private String repair(String[] s) {
+        String ret = "";
+        if(s.length > 1)
+            for(int i = 1; i < s.length; i++)
+                ret += s[i];
+        return ret;
+    }
+
+    @JSRunnable
+    public void openPage(String url) {
         try {
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-
-            Element root = doc.getDocumentElement();
-            NodeList nl = root.getElementsByTagName(tag);
-            for(int i = 0; i < nl.getLength(); i++) {
-                Element e = (Element)nl.item(i);
-                SearchResult sr = new SearchResult(e.getAttribute("href"), e.getTextContent(), "");
-                list.add(sr);
-                System.out.println(sr.toString());
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                System.err.println("Default browser not supported!");
             }
-
-        } catch(ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch(SAXException e) {
-            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            System.err.println(e.getMessage() + " : " + e.getCause() + " -> " + e.getReason());
+        } catch (IOException e) {
+            System.err.println(e.getMessage() + " : " + e.getCause());
         }
     }
+
+//    public void xmlParse(String xml, String tag, List<SearchResult> list, Class c) {
+//        System.out.println(xml);
+//        try {
+//            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+//
+//            Element root = doc.getDocumentElement();
+//            NodeList nl = root.getElementsByTagName(tag);
+//            for(int i = 0; i < nl.getLength(); i++) {
+//                Element e = (Element)nl.item(i);
+//                SearchResult sr = new SearchResult(e.getAttribute("href"), e.getTextContent(), "");
+//                list.add(sr);
+//                System.out.println(sr.toString());
+//            }
+//
+//        } catch(ParserConfigurationException e) {
+//            e.printStackTrace();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//        } catch(SAXException e) {
+//            e.printStackTrace();
+////        }
+//        Matcher m = aPattern.matcher(xml);
+//        while(m.matches())
+//            System.out.println(m.group());
+//    }
 }
