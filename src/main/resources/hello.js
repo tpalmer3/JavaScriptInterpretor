@@ -1,8 +1,3 @@
-/**
- * 
- */
-
-
 function fillArray(x){
 	var array = [];
 	for(var i = 0; i <= x; i++){
@@ -18,7 +13,3 @@ function fillArray(x){
 }
 var myVar = fillArray(4);
 myVar;
-
-
-console.log("sort function added from hello.js")
-
