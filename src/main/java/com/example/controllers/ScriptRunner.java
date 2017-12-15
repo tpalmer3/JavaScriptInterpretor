@@ -105,9 +105,8 @@ public class ScriptRunner {
                         obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
                     }
                     log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
-                }
-                catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
-                catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                } catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());
+                } catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
             }
         }
 
