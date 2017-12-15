@@ -121,38 +121,6 @@ public class ScriptRunner {
         log.debug(c.getName() + " has been registered as: " + name);
     }
 
-    public static void testV8() {
-//    	System.out.println(runScriptWithReturn("random.fillArray(3);"));
-        runScript("console.log('hello, world');");
-        runScript("console.log(console.add(1,2));");
-        System.out.println(runScriptWithReturn("var x = 25;x;"));
-        System.out.println(runScriptWithReturn("x;"));
-        System.out.println(runScriptWithReturn("math.PI + 2;"));
-        System.out.println(runScriptWithReturn("math.E;"));
-        System.out.println(runScriptWithReturn("'Hello, World!';"));
-        System.out.println(runScriptWithReturn("string.format('%dHello, World!', 23);"));
-        System.out.println(runScriptWithReturn("advMath.square(10);"));
-        System.out.println(runScriptWithReturn("advMath.sqrt(100);"));
-        System.out.println(runScriptWithReturn("advMath.pow(2,3);"));
-
-        System.out.println(runScriptWithReturn("stringlib.length('Test');"));
-        System.out.println(runScriptWithReturn("stringlib.substring('Testing',1,5);"));
-        System.out.println(runScriptWithReturn("stringlib.upper('test');"));
-        System.out.println(runScriptWithReturn("stringlib.lower('TEST');"));
-        System.out.println(runScriptWithReturn("stringlib.reverse('Test');"));
-        System.out.println(runScriptWithReturn("'Test'.split('').reverse().join('');"));
-        System.out.println(runScriptWithReturn("'Test'.split('')[2];"));
-        System.out.println(runScriptWithReturn("x+2;"));
-
-        System.out.println("Working Directory => " + System.getProperty("user.dir"));
-        System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\test.js"));
-
-        runScript("run(dir+'redis_setup.js')");
-        runScript("run(dir+'eliza_setup.js')");
-
-        CLI.run();
-    }
-
     @RequestMapping(path="/run_script/{script}")
     public static void runScript(@PathVariable String s) {
         runScriptWithReturn(s);
@@ -170,8 +138,7 @@ public class ScriptRunner {
         while(flag) {
             try {
 
-//                if(needsRelease)
-                    locker.acquire();
+                locker.acquire();
                 ret += v8.executeScript(s);
                 if(needsRelease)
                     locker.release();
@@ -184,5 +151,5 @@ public class ScriptRunner {
         return ret;
     }
 
-    public static void main(String args[]) {testV8();}
+    public static void main(String args[]) {CLI.run();}
 }

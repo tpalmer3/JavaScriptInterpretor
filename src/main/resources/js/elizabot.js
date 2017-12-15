@@ -219,7 +219,7 @@ function ElizaBot(noRandomFlag) {
 		     "What do you think about machines ?",
 		     "You don't think I am a computer program, do you ?"
 		  ]]
-		]],	
+		]],
 		["am", 0, [
 		 ["* am i *", [
 		     "Do you believe you are (2) ?",
