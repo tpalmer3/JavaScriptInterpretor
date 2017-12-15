@@ -64,6 +64,7 @@ public class ScriptRunner {
 
     private void register(Class c, Object o, String name, boolean annotationNeaded) {
         V8Object obj = new V8Object(v8);
+        
         v8.add(name, obj);
         log.debug(c.getName() + " start registration as: " + name);
 
