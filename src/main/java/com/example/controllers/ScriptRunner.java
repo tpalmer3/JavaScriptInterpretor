@@ -171,8 +171,7 @@ public class ScriptRunner {
         while(flag) {
             try {
 
-//                if(needsRelease)
-                    locker.acquire();
+                locker.acquire();
                 ret += v8.executeScript(s);
                 if(needsRelease)
                     locker.release();
@@ -185,5 +184,5 @@ public class ScriptRunner {
         return ret;
     }
 
-    public static void main(String args[]) {testV8();}
+    public static void main(String args[]) {CLI.run();}
 }

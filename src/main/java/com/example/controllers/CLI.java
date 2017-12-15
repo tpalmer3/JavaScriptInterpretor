@@ -16,6 +16,10 @@ public class CLI {
         String input = "", output;
         in = new Scanner(System.in);
 
+        System.out.println("Working Directory (variable dir) => " + System.getProperty("user.dir") + "\\src\\main\\resources\\js\\\")");
+        System.out.println(FileRunner.runFileWithReturn( System.getProperty("user.dir")+"\\src\\main\\resources\\js\\setup.js"));
+        ScriptRunner.runScript("setup(\"" + System.getProperty("user.dir").replaceAll("\\\\", "\\\\\\\\") + "\\\\src\\\\main\\\\resources\\\\js\\\\\");");
+
         while(true) {
             if(first)
                 System.out.print(">> ");
