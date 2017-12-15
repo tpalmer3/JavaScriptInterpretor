@@ -17,5 +17,9 @@ public class ComparisonOps {
 		}
 		return max;
 	}
+	@JSRunnable
+	public int findMin(int... a) {
+		return 1;
+	}
 
 }
