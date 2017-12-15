@@ -98,15 +98,15 @@ public class ScriptRunner {
                     m.setAccessible(true);
                     if(m.getReturnType() == Long.class) {
                         Converter<Long> con = new Converter<>(o, m.getName());
-                        obj.registerJavaMethod(con, "toString", m.getName(), con.getClass().getDeclaredMethod("toString", Object[].class).getParameterTypes());
-                        v8.executeScript(name + "." + m.getName() + " = converter.toString");
+                        obj.registerJavaMethod(con, "run", m.getName(), con.getClass().getDeclaredMethod("run").getParameterTypes());
+                        v8.executeScript(name + "." + m.getName() + " = converter.run");
 //                        v8.executeScript("converter.toString = null");
                     } else {
                         obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
                     }
                     log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
-                } catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());
-                } catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                } catch(RuntimeException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());
+                } catch(NoSuchMethodException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());}
             }
         }
 
@@ -168,12 +168,13 @@ public class ScriptRunner {
                 try{
                     m.setAccessible(true);
                     Dummy d = new Dummy(c, m.getName());
-                    obj.registerJavaMethod(d, "toString", m.getName(), d.getClass().getDeclaredMethod("toString", Object[].class).getParameterTypes());
-                    v8.executeScript(name + "." + m.getName() + " = dummy.toString");
+                    obj.registerJavaMethod(d, "run", m.getName(), new Class[] {Object[].class});//d.getClass().getDeclaredMethod("run").getParameterTypes());
+                    System.out.println("function " + name + "." + m.getName() + "(a) { dummy.run(a);}");
+                    v8.executeScript(name + "." + m.getName() +  " = function dostuff(a) { dummy.run(a);}");
 //                    v8.executeScript("converter.toString = null");
                     log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
-                } catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());
-                } catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                } catch(RuntimeException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());
+                } //catch(NoSuchMethodException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());}
             }
         }
 

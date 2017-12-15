@@ -13,7 +13,7 @@ public class Converter<X> {
         this.method = method;
     }
 
-    public String toString(Object... vals) {
+    public String run(Object... vals) {
         X ret = null;
         Method m;
 

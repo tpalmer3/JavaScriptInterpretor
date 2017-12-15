@@ -13,11 +13,12 @@ public class Dummy {
         this.method = method;
     }
 
-    public String toString(Object... vals) {
+    public String run(Object[] vals) {
         Object ret = null;
+        Method m = null;
 
         try {
-            Method m = c.getDeclaredMethod(method);
+            m = c.getDeclaredMethod(method);
             ret = m.invoke(null, vals);
         } catch(NoSuchMethodException e) {
             System.err.println("Method \"" + c.getSimpleName() + "." + method + "\" not properly instantiated!");
@@ -26,7 +27,9 @@ public class Dummy {
         } catch(InvocationTargetException e) {
             System.err.println("Method \"" + c.getSimpleName() + "." + method + "\" not invoked properly!");
         }
-
+        System.out.println(ret);
+        System.out.println(ret.toString());
+        System.out.println(m.getReturnType().cast(ret).toString());
         return ret.toString();
     }
 }
