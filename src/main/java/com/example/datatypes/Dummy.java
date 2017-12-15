@@ -8,7 +8,7 @@ public class Dummy {
     private Class c;
     private String method;
 
-    public Dummy(Class c, String name, String method) {
+    public Dummy(Class c, String method) {
         this.c = c;
         this.method = method;
     }

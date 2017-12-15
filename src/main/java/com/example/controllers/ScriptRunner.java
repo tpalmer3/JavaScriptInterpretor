@@ -7,6 +7,7 @@ import com.example.annotations.JSRunnable;
 import com.example.components.RedisOps;
 import com.example.components.TimeOps;
 import com.example.datatypes.Converter;
+import com.example.datatypes.Dummy;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +29,6 @@ public class ScriptRunner {
 
     private static V8 v8;
 
-    private static int converterCount = 0;
-
     private ScriptRunner() {
         log = Logger.getLogger(ScriptRunner.class.getName());
         v8 = V8.createV8Runtime();
@@ -37,11 +36,12 @@ public class ScriptRunner {
         v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
 
         v8.executeScript("converter = {}");
+        v8.executeScript("dummy = {}");
 
         this.Initializer("com.example.components");
         this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
-        this.register(java.lang.Math.class, "math", false);
+        this.registerStatic(java.lang.Math.class, "math", false);
         this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
 //        this.register(com.example.components.RedisOps.class, "redis", false);
 
@@ -117,6 +117,73 @@ public class ScriptRunner {
                 Object val = new Object();
                 try {
                     val = f.get(o);
+                } catch(IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if(c2 == String.class)
+                    obj.add(f.getName(), val.toString());
+                else if(c2.isPrimitive() && val instanceof Number) {
+                    if(val instanceof Double)
+                        obj.add(f.getName(), (Double) val);
+                    else if(val instanceof Integer)
+                        obj.add(f.getName(), (Integer) val);
+                } else if(c2.isPrimitive() && val instanceof Boolean)
+                    obj.add(f.getName(), (Boolean)val);
+                log.debug("field: \"" + f.getName() + "\"\n\tWith a value of: " + val + "\n\thas been registered for object: " + name);
+            }
+        }
+        obj.release();
+        log.debug(c.getName() + " has been registered as: " + name);
+    }
+
+    private void registerStatic(Class c, String name, boolean annotationNeaded) {
+        V8Object obj = new V8Object(v8);
+        v8.add(name, obj);
+        log.debug(c.getName() + " start registration as: " + name);
+
+//        Object o = null
+//
+//        try {
+//            if(o == null)
+//                o = c.newInstance();
+//        } catch(IllegalAccessException e) {
+//            try {
+//                for (Constructor con : c.getConstructors()) {
+//                    con.setAccessible(true);
+//                    o = con.newInstance(null);
+//                }
+//            } catch (InstantiationException e2) {
+//                e2.printStackTrace();
+//            } catch (IllegalAccessException e2) {
+//                e2.printStackTrace();
+//            } catch (InvocationTargetException e2) {
+//                e2.printStackTrace();
+//            }
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
+
+        for (Method m : c.getDeclaredMethods()) {
+            if(m.isAnnotationPresent(JSRunnable.class) || !annotationNeaded) {
+                try{
+                    m.setAccessible(true);
+                    Dummy d = new Dummy(c, m.getName());
+                    obj.registerJavaMethod(d, "toString", m.getName(), d.getClass().getDeclaredMethod("toString", Object[].class).getParameterTypes());
+                    v8.executeScript(name + "." + m.getName() + " = dummy.toString");
+//                    v8.executeScript("converter.toString = null");
+                    log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
+                } catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());
+                } catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
+            }
+        }
+
+        for (Field f : c.getDeclaredFields()) {
+            if(f.isAnnotationPresent(JSComponent.class) || !annotationNeaded) {
+                f.setAccessible(true);
+                Class c2 = f.getType();
+                Object val = new Object();
+                try {
+                    val = f.get(null);
                 } catch(IllegalAccessException e) {
                     e.printStackTrace();
                 }
