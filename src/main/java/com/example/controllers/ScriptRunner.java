@@ -6,6 +6,7 @@ import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.components.RedisOps;
 import com.example.components.TimeOps;
+import com.example.datatypes.Converter;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,19 +28,25 @@ public class ScriptRunner {
 
     private static V8 v8;
 
+    private static int converterCount = 0;
+
     private ScriptRunner() {
         log = Logger.getLogger(ScriptRunner.class.getName());
         v8 = V8.createV8Runtime();
+
+        v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
+
+        v8.executeScript("converter = {}");
 
         this.Initializer("com.example.components");
         this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
         this.register(java.lang.Math.class, "math", false);
-        this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis_d", false);
+        this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
+//        this.register(com.example.components.RedisOps.class, "redis", false);
 
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
-        v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
     }
 
     public ScriptRunner getScriptRunner() {return runner;}
@@ -89,9 +96,18 @@ public class ScriptRunner {
             if(m.isAnnotationPresent(JSRunnable.class) || !annotationNeaded) {
                 try{
                     m.setAccessible(true);
-                    obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
+                    if(m.getReturnType() == Long.class) {
+                        Converter<Long> con = new Converter<>(o, m.getName());
+                        obj.registerJavaMethod(con, "toString", m.getName(), con.getClass().getDeclaredMethod("toString", Object[].class).getParameterTypes());
+                        v8.executeScript(name + "." + m.getName() + " = converter.toString");
+//                        v8.executeScript("converter.toString = null");
+                    } else {
+                        obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
+                    }
                     log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
-                }catch(RuntimeException e) {}
+                }
+                catch(RuntimeException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                catch(NoSuchMethodException e) { System.err.println(e.getCause()+":"+e.getMessage()+":"+m.getName());}
             }
         }
 

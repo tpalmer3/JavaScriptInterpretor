@@ -45,28 +45,28 @@ public class RedisOps {
         log.debug("\nJedis connected: " + jedis.isConnected() + "\n\tConnected to port: " + conn.getPort() + "\n\tTo host: " + conn.getHost() + "\n");
     }
 
-    @JSRunnable
-    public static String expire(String s, int i) {return jedis.expire(s,i).toString();}
-    @JSRunnable
-    public static String expire_byte(byte[] s, int i) {return jedis.expire(s,i).toString();}
-    @JSRunnable
-    public static String ttl(String s) {return jedis.ttl(s).toString();}
-    @JSRunnable
-    public static String append(String s, String i) {return jedis.append(s,i).toString();}
-    @JSRunnable
-    public static String clusterCountKeysInSlot(int i) {return jedis.clusterCountKeysInSlot(i).toString();}
-    @JSRunnable
-    public static String clusterKeySlot(String s) {return jedis.clusterKeySlot(s).toString();}
-    @JSRunnable
-    public static String decr(String s) {return jedis.decr(s).toString();}
-    @JSRunnable
-    public static String decr_byte(byte[] s) {return jedis.decr(s).toString();}
-    @JSRunnable
-    public static String decrBy(String s, int i) {return jedis.decrBy(s,i).toString();}
-    @JSRunnable
-    public static String decrBy_byte(byte[] s, int i) {return jedis.decrBy(s,i).toString();}
-    @JSRunnable
-    public static String eval(String s) {return jedis.eval(s).toString();}
-    @JSRunnable
-    public static String evalsha(String s) {return jedis.evalsha(s).toString();}
+//    @JSRunnable
+//    public static String expire(String s, int i) {return jedis.expire(s,i).toString();}
+//    @JSRunnable
+//    public static String expire_byte(byte[] s, int i) {return jedis.expire(s,i).toString();}
+//    @JSRunnable
+//    public static String ttl(String s) {return jedis.ttl(s).toString();}
+//    @JSRunnable
+//    public static String append(String s, String i) {return jedis.append(s,i).toString();}
+//    @JSRunnable
+//    public static String clusterCountKeysInSlot(int i) {return jedis.clusterCountKeysInSlot(i).toString();}
+//    @JSRunnable
+//    public static String clusterKeySlot(String s) {return jedis.clusterKeySlot(s).toString();}
+//    @JSRunnable
+//    public static String decr(String s) {return jedis.decr(s).toString();}
+//    @JSRunnable
+//    public static String decr_byte(byte[] s) {return jedis.decr(s).toString();}
+//    @JSRunnable
+//    public static String decrBy(String s, int i) {return jedis.decrBy(s,i).toString();}
+//    @JSRunnable
+//    public static String decrBy_byte(byte[] s, int i) {return jedis.decrBy(s,i).toString();}
+//    @JSRunnable
+//    public static String eval(String s) {return jedis.eval(s).toString();}
+//    @JSRunnable
+//    public static String evalsha(String s) {return jedis.evalsha(s).toString();}
 }
