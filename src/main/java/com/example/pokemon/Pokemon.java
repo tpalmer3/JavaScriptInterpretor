@@ -1,4 +1,4 @@
-package com.exampe.pokemon;
+package com.example.pokemon;
 
 import java.util.List;
 
@@ -76,15 +76,19 @@ public class Pokemon {
 
 
 
-	public String getImage() {
-		return image;
+
+
+
+
+	@Override
+	public String toString() {
+		return "Pokemon [id=" + id + ", name=" + name + ", types=" + types + ", stats=" + stats + ", height=" + height
+				+ ", weight=" + weight + ", img=" + img + "]";
 	}
 
 
 
-	public void setImage(String image) {
-		this.image = image;
-	}
+
 
 
 
@@ -93,13 +97,28 @@ public class Pokemon {
 	private List<Types> types;
 	private Stats stats;
 	private double height, weight;
-	private String image;
+	private String img;
 	
 	public Pokemon() {
 		
 	}
-	
-	public Pokemon(int id, String name, List<Types> types, Stats stats, double height, double weight, String image) {
+
+
+
+
+	public String getImg() {
+		return img;
+	}
+
+
+
+	public void setImg(String img) {
+		this.img = img;
+	}
+
+
+
+	public Pokemon(int id, String name, List<Types> types, Stats stats, double height, double weight, String img) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -107,8 +126,9 @@ public class Pokemon {
 		this.stats = stats;
 		this.height = height;
 		this.weight = weight;
-		this.image = image;
+		this.img = img;
 	}
+
 
 
 

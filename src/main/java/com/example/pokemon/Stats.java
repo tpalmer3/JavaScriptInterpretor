@@ -1,9 +1,12 @@
-package com.exampe.pokemon;
+package com.example.pokemon;
 
 public class Stats {
 
 	private int hp,attack,defense,spAttack,spDefense,speed;
 
+	public Stats() {
+		
+	}
 	public Stats(int hp, int attack, int defense, int spAttack, int spDefense, int speed) {
 		super();
 		this.hp = hp;
@@ -14,6 +17,11 @@ public class Stats {
 		this.speed = speed;
 	}
 
+	@Override
+	public String toString() {
+		return "Stats [hp=" + hp + ", attack=" + attack + ", defense=" + defense + ", spAttack=" + spAttack
+				+ ", spDefense=" + spDefense + ", speed=" + speed + "]";
+	}
 	public int getHp() {
 		return hp;
 	}

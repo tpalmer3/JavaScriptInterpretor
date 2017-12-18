@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bson.Document;
@@ -13,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.exampe.pokemon.Pokemon;
+import com.example.pokemon.Pokemon;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -59,13 +60,24 @@ public class PokemonMongo {
 		return new MongoClient(new ServerAddress("192.168.99.100", 27017), new MongoClientOptions.Builder().build());
 	}
 	
-	public static List<Pokemon> createDB(){
+	public static Set<Pokemon> createDB(){
 		ObjectMapper mapper = new ObjectMapper();
 		JsonFactory factory = mapper.getFactory();
+		Set<Pokemon> list = null;
 
 		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");
 		try {
+			Pokemon temp = new Pokemon();
 			Pokemon poke = mapper.readValue(file, Pokemon.class);
+			temp.setId(poke.getId());
+			temp.setName(poke.getName());
+			temp.setTypes(poke.getTypes());
+			temp.setStats(poke.getStats());
+			temp.setHeight(poke.getHeight());
+			temp.setWeight(poke.getWeight());
+			temp.setImg(poke.getImg());
+			System.out.println(temp.toString());
+			list.add(temp);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,7 +91,7 @@ public class PokemonMongo {
 
 		
 		
-		return null;
+		return list;
 	}
 	
 
