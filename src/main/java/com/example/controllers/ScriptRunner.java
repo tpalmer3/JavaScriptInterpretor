@@ -44,7 +44,7 @@ public class ScriptRunner {
         this.Initializer("com.example.controllers");
         this.register(java.lang.String.class, "string", false);
         this.registerStatic(java.lang.Math.class, "math", false);
-        this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
+       // this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
 //        this.register(com.example.components.RedisOps.class, "redis", false);
 
 
@@ -168,7 +168,7 @@ public class ScriptRunner {
         runScript("run(dir+'eliza_setup.js')");
 
         CLI.run();
-
+    }
 
     private void registerStatic(Class c, String name, boolean annotationNeaded) {
         V8Object obj = new V8Object(v8);
