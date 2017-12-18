@@ -1,15 +1,23 @@
 package com.example.mongo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.bson.Document;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.exampe.pokemon.Pokemon;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
@@ -53,14 +61,11 @@ public class PokemonMongo {
 	
 	public static List<Pokemon> createDB(){
 		ObjectMapper mapper = new ObjectMapper();
+		JsonFactory factory = mapper.getFactory();
+
 		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");
-		
 		try {
-			Pokemon pokemon = mapper.readValue(file, Pokemon.class);
-			log.info(pokemon.toString());
-			
-			
-			
+			Pokemon poke = mapper.readValue(file, Pokemon.class);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,8 +75,8 @@ public class PokemonMongo {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
+
 		
 		
 		return null;
