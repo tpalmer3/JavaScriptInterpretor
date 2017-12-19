@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +23,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -48,7 +58,7 @@ public class PokemonMongo {
 		
 		MongoCollection<Document> collection = database.getCollection("Pokemon");
 		
-		createDB();
+		collection.insertMany(createDB());
 		
 //		collection.insertMany(arg0);
 		
@@ -60,24 +70,21 @@ public class PokemonMongo {
 		return new MongoClient(new ServerAddress("192.168.99.100", 27017), new MongoClientOptions.Builder().build());
 	}
 	
-	public static Set<Pokemon> createDB(){
+	public static List<? extends Document> createDB(){
 		ObjectMapper mapper = new ObjectMapper();
-		JsonFactory factory = mapper.getFactory();
-		Set<Pokemon> list = null;
+		List<Pokemon> list = new ArrayList<Pokemon>();
 
 		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");
+
+		
+		
 		try {
-			Pokemon temp = new Pokemon();
-			Pokemon poke = mapper.readValue(file, Pokemon.class);
-			temp.setId(poke.getId());
-			temp.setName(poke.getName());
-			temp.setTypes(poke.getTypes());
-			temp.setStats(poke.getStats());
-			temp.setHeight(poke.getHeight());
-			temp.setWeight(poke.getWeight());
-			temp.setImg(poke.getImg());
-			System.out.println(temp.toString());
-			list.add(temp);
+			List<Pokemon> pokemon = mapper.reader().forType(new TypeReference<List<Pokemon>>() {}).readValue(file);
+			System.out.println(pokemon.size());
+			System.out.println(pokemon.get(51));
+
+
+			
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,7 +98,7 @@ public class PokemonMongo {
 
 		
 		
-		return list;
+		return pokemon;
 	}
 	
 

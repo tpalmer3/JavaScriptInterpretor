@@ -134,7 +134,7 @@ public class Pokemon {
 
 	public enum Types{
 		Normal,
-		Fight,
+		Fighting,
 		Flying,
 		Poison,
 		Ground,
