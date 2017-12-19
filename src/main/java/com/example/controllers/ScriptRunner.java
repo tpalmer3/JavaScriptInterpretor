@@ -5,20 +5,14 @@ import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.components.RedisOps;
-import com.example.components.TimeOps;
-import com.example.datatypes.Converter;
-import com.example.datatypes.Dummy;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 
 @RestController
 public class ScriptRunner {
@@ -29,35 +23,43 @@ public class ScriptRunner {
 
     private static V8 v8;
 
+    private static List<String> ignoring;
+
     private ScriptRunner() {
         log = Logger.getLogger(ScriptRunner.class.getName());
-        v8 = V8.createV8Runtime();
 
+        v8 = V8.createV8Runtime();
         v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
 
-        v8.executeScript("converter = {}");
-        v8.executeScript("dummy = {}");
+        ignoring = new ArrayList<>(Arrays.asList("com.example.components.RandomTester",
+                "com.example.components.MongoDBOps"));
+//                "com.example.components.LispOps"));
 
         this.Initializer("com.example.components");
         this.Initializer("com.example.controllers");
-        this.register(java.lang.String.class, "string", false);
+        this.registerStatic(java.lang.Integer.class, "integer", false);
+        this.registerStatic(java.lang.Double.class, "double", false);
+        this.registerStatic(java.lang.String.class, "string", false);
         this.registerStatic(java.lang.Math.class, "math", false);
         this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
-//        this.register(com.example.components.RedisOps.class, "redis", false);
 
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
     }
 
-    public ScriptRunner getScriptRunner() {return runner;}
+    public static ScriptRunner getScriptRunner() {return runner;}
+
+    public static void ignore(String className) {ignoring.add(className);}
 
     public void Initializer(String packageName) {
         Reflections classes = new Reflections(packageName);
         Set<Class<?>> annotated = classes.getTypesAnnotatedWith(JSComponent.class);
 
         for(Class c : annotated) {
-            String name = ((JSComponent)c.getAnnotation(JSComponent.class)).name();
-            if(name.equals("[unassigned]")){register(c);}else{register(c, name);};
+            if(!ignoring.contains(c.getName())) {
+                String name = ((JSComponent) c.getAnnotation(JSComponent.class)).name();
+                if (name.equals("[unassigned]")) {register(c);} else {register(c, name);}
+            }
         }
     }
 
@@ -65,12 +67,14 @@ public class ScriptRunner {
 
     public void register(Class c, String name) {register(c,name,true);}
 
-    private void register(Class c, String name, boolean annotationNeaded) {register(c,null,name,annotationNeaded);}
+    public void register(Class c, String name, boolean annotationNeaded) {register(c,null,name,annotationNeaded);}
 
-    private void register(Class c, Object o, String name, boolean annotationNeaded) {
+    public void register(Class c, Object o, String name, boolean annotationNeaded) {
         V8Object obj = new V8Object(v8);
         v8.add(name, obj);
         log.debug(c.getName() + " start registration as: " + name);
+
+        HashMap<String,Integer> counts = new HashMap<>();
 
         try {
             if(o == null)
@@ -96,17 +100,58 @@ public class ScriptRunner {
             if(m.isAnnotationPresent(JSRunnable.class) || !annotationNeaded) {
                 try{
                     m.setAccessible(true);
-                    if(m.getReturnType() == Long.class) {
-                        Converter<Long> con = new Converter<>(o, m.getName());
-                        obj.registerJavaMethod(con, "run", m.getName(), con.getClass().getDeclaredMethod("run").getParameterTypes());
-                        v8.executeScript(name + "." + m.getName() + " = converter.run");
-//                        v8.executeScript("converter.toString = null");
-                    } else {
-                        obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
+
+                    boolean repeat = false;
+                    if(counts.get(m.getName()) != null) {
+                        counts.put(m.getName(), counts.get(m.getName()) + 1);
+                        repeat = true;
                     }
-                    log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
+
+                    if(m.getReturnType() == Long.class) {
+                        Object invoker = o;
+                        JavaCallback jc = new JavaCallback() {
+                            Object obj = invoker;
+
+                            @Override
+                            public Object invoke(V8Object v8Object, V8Array v8Array) {
+
+                                Object ret = null;
+                                try {
+                                    ArrayList<Object> objs = new ArrayList<>();
+                                    for(String key: v8Array.getKeys())
+                                        objs.add(v8Array.get(key));
+                                    ret = m.invoke(this.obj, objs.toArray());
+                                } catch(IllegalAccessException e) {
+
+                                } catch(InvocationTargetException e) {
+
+                                }
+                                if(ret == null)
+                                    return V8Value.NULL;
+                                else if(ret instanceof Long || ret instanceof Float)
+                                    return ret.toString();
+                                else
+                                    return ret;
+                            }
+                        };
+
+                        if(repeat) {
+                            obj.registerJavaMethod(jc, m.getName() + counts.get(m.getName()));
+                        } else {
+                            obj.registerJavaMethod(jc, m.getName());
+                            counts.put(m.getName(), 0);
+                        }
+                    } else {
+                        if(repeat) {
+                            obj.registerJavaMethod(o, m.getName(), m.getName() + counts.get(m.getName()), m.getParameterTypes());
+                        } else {
+                            obj.registerJavaMethod(o, m.getName(), m.getName(), m.getParameterTypes());
+                            counts.put(m.getName(), 0);
+                        }
+                    }
+                    printMethodDebug(m, name);
                 } catch(RuntimeException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());
-                } catch(NoSuchMethodException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                }
             }
         }
 
@@ -118,7 +163,13 @@ public class ScriptRunner {
                 try {
                     val = f.get(o);
                 } catch(IllegalAccessException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                } catch(ExceptionInInitializerError e) {
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                    continue;
+                } catch(NullPointerException e) {
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                    continue;
                 }
                 if(c2 == String.class)
                     obj.add(f.getName(), val.toString());
@@ -136,45 +187,60 @@ public class ScriptRunner {
         log.debug(c.getName() + " has been registered as: " + name);
     }
 
-    private void registerStatic(Class c, String name, boolean annotationNeaded) {
+    public void registerStatic(Class c, String name, boolean annotationNeaded) {
         V8Object obj = new V8Object(v8);
         v8.add(name, obj);
         log.debug(c.getName() + " start registration as: " + name);
 
-//        Object o = null
-//
-//        try {
-//            if(o == null)
-//                o = c.newInstance();
-//        } catch(IllegalAccessException e) {
-//            try {
-//                for (Constructor con : c.getConstructors()) {
-//                    con.setAccessible(true);
-//                    o = con.newInstance(null);
-//                }
-//            } catch (InstantiationException e2) {
-//                e2.printStackTrace();
-//            } catch (IllegalAccessException e2) {
-//                e2.printStackTrace();
-//            } catch (InvocationTargetException e2) {
-//                e2.printStackTrace();
-//            }
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        }
+        HashMap<String,Integer> counts = new HashMap<>();
 
         for (Method m : c.getDeclaredMethods()) {
             if(m.isAnnotationPresent(JSRunnable.class) || !annotationNeaded) {
                 try{
                     m.setAccessible(true);
-                    Dummy d = new Dummy(c, m.getName());
-                    obj.registerJavaMethod(d, "run", m.getName(), new Class[] {Object[].class});//d.getClass().getDeclaredMethod("run").getParameterTypes());
-                    System.out.println("function " + name + "." + m.getName() + "(a) { dummy.run(a);}");
-                    v8.executeScript(name + "." + m.getName() +  " = function dostuff(a) { dummy.run(a);}");
-//                    v8.executeScript("converter.toString = null");
-                    log.debug("method: \"" + m.getName() + "\" \n\twith parameters: (" + m.getParameterTypes() + ")\n\thas been registered for object: " + name);
+                    boolean repeat = false;
+                    if(counts.get(m.getName()) != null) {
+                        counts.put(m.getName(), counts.get(m.getName()) + 1);
+                        repeat = true;
+                    }
+
+                    JavaCallback jc = new JavaCallback() {
+                        @Override
+                        public Object invoke(V8Object v8Object, V8Array v8Array) {
+                            Object ret = null;
+                            try {
+                                ArrayList<Object> objs = new ArrayList<>();
+                                for(String key: v8Array.getKeys())
+                                    objs.add(v8Array.get(key));
+                                if(Modifier.isStatic(m.getModifiers()))
+                                    ret = m.invoke(null, objs.toArray());
+                                else
+                                    ret = m.invoke(objs.get(0), objs.subList(1, objs.size()-1).toArray());
+                            } catch(IllegalAccessException e) {
+
+                            } catch(InvocationTargetException e) {
+
+                            }
+                            if(ret == null)
+                                return V8Value.NULL;
+                            else if(ret instanceof Long || ret instanceof Float)
+                                return ret.toString();
+                            else
+                                return ret;
+                        }
+                    };
+
+                    if(repeat) {
+                        obj.registerJavaMethod(jc, m.getName() + counts.get(m.getName()));
+                        System.out.println("function " + name + "." + m.getName() + counts.get(m.getName()) + " = \"" + m.getName() + "\"");
+                    } else {
+                        obj.registerJavaMethod(jc, m.getName());
+                        counts.put(m.getName(), 0);
+                        System.out.println("function " + name + "." + m.getName() + " = \"" + m.getName() + "\"");
+                    }
+                    printMethodDebug(m, name);
                 } catch(RuntimeException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());
-                } //catch(NoSuchMethodException e) { System.err.println(e.toString()+">"+e.getCause()+":"+e.getMessage()+":"+m.getName());}
+                }
             }
         }
 
@@ -186,7 +252,13 @@ public class ScriptRunner {
                 try {
                     val = f.get(null);
                 } catch(IllegalAccessException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                } catch(ExceptionInInitializerError e) {
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                    continue;
+                } catch(NullPointerException e) {
+                    System.err.println(e.getCause() + " : " + e.getMessage());
+                    continue;
                 }
                 if(c2 == String.class)
                     obj.add(f.getName(), val.toString());
@@ -202,6 +274,15 @@ public class ScriptRunner {
         }
         obj.release();
         log.debug(c.getName() + " has been registered as: " + name);
+    }
+
+    private static void printMethodDebug(Method m, String name) {
+        String debug = "method: \"" + m.getName() + "\" \n\twith parameters: ( ";
+        for(Class cl : m.getParameterTypes())
+            debug += cl.getSimpleName()+" ";
+        debug += ")\n\thas been registered for object: " + name;
+
+        log.debug(debug);
     }
 
     @RequestMapping(path="/run_script/{script}")
