@@ -1,18 +1,12 @@
 package com.example.components;
 
-import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
-import com.example.controllers.ScriptRunner;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.apache.log4j.LogManager;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 import java.util.Iterator;
 

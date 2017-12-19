@@ -1,23 +1,46 @@
-package com.example.components;
+package com.example.runners;
 
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
+import com.example.controllers.CLI;
+import com.example.controllers.FileRunner;
 import com.example.datatypes.Environment;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 @JSComponent(name="lisp")
-public class LispOps {
+public class LispRunner implements ScriptRunner {
     private static Environment globals = new Environment();
 
     private static String[] parse(String txt) {
         return txt.split(" ");
     }
 
+    private static LispRunner runner = new LispRunner();
+
+    private String workingDir = System.getProperty("user.dir") + "\\src\\main\\resources\\lisp\\";
+
+    private LispRunner() {}
+
     @JSRunnable
-    public static String begin(String txt) {
+    public String run(String input) {return begin(input);}
+
+    public String run(String input, boolean b) {return begin(input);}
+
+    public static LispRunner getRunner() {return runner;}
+
+    @JSRunnable
+    public void start() {new CLI(getRunner(), "LISP> ").run();}
+
+    @JSRunnable
+    public String runFile(String fname) {return new FileRunner(runner).runFileWithReturn(workingDir+fname);}
+
+    @JSRunnable
+    public void setDir(String workingDir) {this.workingDir = workingDir;}
+
+    @JSRunnable
+    public String begin(String txt) {
         ArrayList<String> tokens = new ArrayList<>();
         boolean flag = false;
         String quote = null;
@@ -111,6 +134,9 @@ public class LispOps {
                 case "LOWER":
                     ret = processToken(env).toLowerCase();
                     break;
+                case "EXIT":
+                    System.exit(0);
+                    break;
                 case "+":
                     ret = String.valueOf(Double.parseDouble(processToken(env)) + Double.parseDouble(processToken(env)));
                     break;
@@ -129,7 +155,14 @@ public class LispOps {
                         env.getCode().add(0, s);
                         return processToken(env);
                     } else if(env == globals) {
-                        return (String) token;
+                        ret = JavaScriptRunner.runScriptWithReturn((String)token, true);//getVal((String)token).toString();
+                        if(ret.equals("function () { [native code] }"))
+                            if(tokens.isEmpty())
+                                return JavaScriptRunner.runScriptWithReturn((String)token+"()", true);
+                            else
+                                return JavaScriptRunner.runScriptWithReturn((String)token+(Environment)tokens.remove(0), true);
+                        else if(ret.equals("undefined"))
+                            return (String) token;
                     } else {
                         env.getParent().getCode().add(0, token);
                         return processToken(env.getParent());
@@ -141,7 +174,6 @@ public class LispOps {
             else if (((Environment) token).getType().equals("Function")) {
                 ArrayList<Object> parameters = ((Environment)((Environment)token).getCode().get(0)).getCode();
                 Environment function = new Environment((Environment)((Environment)token).getCode().get(1), env);
-                //ArrayList<Object> inputs = ((Environment)tokens.remove(0)).getCode();
                 Environment input = (Environment)tokens.remove(0);
                 for(int i = 0; i < parameters.size(); i++) {
                     function.put((String)parameters.get(i), processToken(input));
@@ -152,13 +184,16 @@ public class LispOps {
         } else {
             ret = token.toString();
         }
+        if(ret == null)
+            ret = "";
         return ret;
     }
 
     public static void main(String args[]) {
-        System.out.println(begin("(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))(- 100 x (3))")); //lisp.begin("(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))")
-        System.out.println(begin("(- 100 z (8))"));
-        System.out.println(begin("(- 100 x (3))"));
+        System.out.println(runner.begin("(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))(- 100 x (3))")); //lisp.begin("(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))")
+        System.out.println(runner.begin("(- 100 z (8))"));
+        System.out.println(runner.begin("(- 100 x (3))"));
+        runner.start();
     }
 
 }

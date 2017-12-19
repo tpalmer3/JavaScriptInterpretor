@@ -1,6 +1,7 @@
 var dir = "";
 run = files.runFileWithReturn;
 require = run;
+exit = system.exit;
 setInterval = timer.setInterval;
 
 function setup(home) {

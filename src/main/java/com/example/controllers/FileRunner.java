@@ -2,6 +2,8 @@ package com.example.controllers;
 
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
+import com.example.runners.JavaScriptRunner;
+import com.example.runners.ScriptRunner;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -14,15 +16,21 @@ public class FileRunner {
     private static Scanner in;
     private static BufferedWriter out;
 
+    private static ScriptRunner runner;
+
+    public FileRunner() {}
+
+    public FileRunner(ScriptRunner runner) {this.runner = runner;}
+
     @RequestMapping(path="/run_file/{fname}")
     @JSRunnable
-    public static void runFile(@PathVariable String fname) {
+    public void runFile(@PathVariable String fname) {
         runFileWithReturn(fname);
     }
 
     @RequestMapping(path="/run_file_with_return/{fname}")
     @JSRunnable
-    public static String runFileWithReturn(@PathVariable String fname) {
+    public String runFileWithReturn(@PathVariable String fname) {
         File f = new File(fname);
 
         try {
@@ -34,7 +42,7 @@ public class FileRunner {
 
             in.close();
 
-            String out = ScriptRunner.runScriptWithReturn(full, false);
+            String out = runner.run(full, false);
             if(out.equals("undefined"))
                 out = "";
 

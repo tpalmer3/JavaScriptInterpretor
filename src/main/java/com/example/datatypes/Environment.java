@@ -62,6 +62,6 @@ public class Environment {
                 ret += ",{"+((Environment)o).toString()+"}"+((Environment)o).type;
             else
                 ret += ","+o.toString();
-        return ret;
+        return "("+ret.substring(1,ret.length())+")";
     }
 }

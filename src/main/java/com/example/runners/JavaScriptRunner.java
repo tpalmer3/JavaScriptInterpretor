@@ -1,10 +1,12 @@
-package com.example.controllers;
+package com.example.runners;
 
 import com.eclipsesource.v8.*;
 import com.eclipsesource.v8.utils.V8Executor;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.components.RedisOps;
+import com.example.components.TimeOps;
+import com.example.controllers.CLI;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +17,9 @@ import java.lang.reflect.*;
 import java.util.*;
 
 @RestController
-public class ScriptRunner {
+public class JavaScriptRunner implements ScriptRunner{
 
-    private static ScriptRunner runner = new ScriptRunner();
+    private static JavaScriptRunner runner = new JavaScriptRunner();
 
     private static Logger log;
 
@@ -25,8 +27,8 @@ public class ScriptRunner {
 
     private static List<String> ignoring;
 
-    private ScriptRunner() {
-        log = Logger.getLogger(ScriptRunner.class.getName());
+    private JavaScriptRunner() {
+        log = Logger.getLogger(JavaScriptRunner.class.getName());
 
         v8 = V8.createV8Runtime();
         v8.registerV8Executor(new V8Object(v8), new V8Executor(""));
@@ -35,23 +37,38 @@ public class ScriptRunner {
                 "com.example.components.MongoDBOps"));
 //                "com.example.components.LispOps"));
 
-        this.Initializer("com.example.components");
-        this.Initializer("com.example.controllers");
+
+        V8Object obj = new V8Object(v8);
+        v8.add("system", obj);
+        JavaCallback jc = new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                TimeOps.stopAll();
+                System.exit(0);
+                return null;
+            }
+        };
+        obj.registerJavaMethod(jc, "exit");
+
+        this.initializer("com.example.components");
+        this.initializer("com.example.controllers");
         this.registerStatic(java.lang.Integer.class, "integer", false);
         this.registerStatic(java.lang.Double.class, "double", false);
         this.registerStatic(java.lang.String.class, "string", false);
         this.registerStatic(java.lang.Math.class, "math", false);
         this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
 
+        this.register(com.example.runners.LispRunner.class, LispRunner.getRunner(), "lisp", true);
+
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
     }
 
-    public static ScriptRunner getScriptRunner() {return runner;}
+    public static ScriptRunner getRunner() {return runner;}
 
     public static void ignore(String className) {ignoring.add(className);}
 
-    public void Initializer(String packageName) {
+    public void initializer(String packageName) {
         Reflections classes = new Reflections(packageName);
         Set<Class<?>> annotated = classes.getTypesAnnotatedWith(JSComponent.class);
 
@@ -285,6 +302,10 @@ public class ScriptRunner {
         log.debug(debug);
     }
 
+    public String run(String input) {return runScriptWithReturn(input);}
+
+    public String run(String input, boolean b) {return runScriptWithReturn(input, b);}
+
     @RequestMapping(path="/run_script/{script}")
     public static void runScript(@PathVariable String s) {
         runScriptWithReturn(s);
@@ -315,5 +336,7 @@ public class ScriptRunner {
         return ret;
     }
 
-    public static void main(String args[]) {CLI.run();}
+    public static Object getVal(String key) {return v8.get(key);}
+
+    public static void main(String args[]) {new CLI(runner, "JS> ").run();}
 }
