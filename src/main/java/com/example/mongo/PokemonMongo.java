@@ -34,8 +34,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 
 
@@ -58,7 +61,20 @@ public class PokemonMongo {
 		
 		MongoCollection<Document> collection = database.getCollection("Pokemon");
 		
+		
+		
 		collection.insertMany(createDB());
+		
+		   FindIterable<Document> iterDoc = collection.find();
+		   int i = 1;
+		   
+		   Iterator it = iterDoc.iterator();
+		   
+		   while(it.hasNext()) {
+			   System.out.println(it.next());
+			   i++;
+		   }
+
 		
 //		collection.insertMany(arg0);
 		
@@ -70,9 +86,9 @@ public class PokemonMongo {
 		return new MongoClient(new ServerAddress("192.168.99.100", 27017), new MongoClientOptions.Builder().build());
 	}
 	
-	public static List<? extends Document> createDB(){
+	public static List<Document> createDB(){
 		ObjectMapper mapper = new ObjectMapper();
-		List<Pokemon> list = new ArrayList<Pokemon>();
+		List<Document> list = new ArrayList<Document>();
 
 		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");
 
@@ -80,8 +96,20 @@ public class PokemonMongo {
 		
 		try {
 			List<Pokemon> pokemon = mapper.reader().forType(new TypeReference<List<Pokemon>>() {}).readValue(file);
-			System.out.println(pokemon.size());
-			System.out.println(pokemon.get(51));
+			int length = pokemon.size();
+			for(int i = 0; i< length-1; i++) {
+				Document document2 = new Document();
+				document2.put("id", pokemon.get(i).getId());
+				document2.put("name", pokemon.get(i).getName());
+				document2.put("types", pokemon.get(i).getTypes().toString());
+				document2.put("stats", pokemon.get(i).getStats().toString());
+				document2.put("height",pokemon.get(i).getHeight());
+				document2.put("weight", pokemon.get(i).getWeight());
+				document2.put("img", pokemon.get(i).getImg());
+				System.out.println(document2);
+				list.add(document2);
+				
+			}
 
 
 			
@@ -98,7 +126,7 @@ public class PokemonMongo {
 
 		
 		
-		return pokemon;
+		return list;
 	}
 	
 
