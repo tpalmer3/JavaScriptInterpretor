@@ -14,9 +14,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 
 import com.example.pokemon.Pokemon;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -31,14 +33,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import junit.framework.Assert;
 
 
 
@@ -61,22 +69,21 @@ public class PokemonMongo {
 		
 		MongoCollection<Document> collection = database.getCollection("Pokemon");
 		
-		
-		
-		collection.insertMany(createDB());
-		
-		   FindIterable<Document> iterDoc = collection.find();
-		   int i = 1;
-		   
-		   Iterator it = iterDoc.iterator();
-		   
-		   while(it.hasNext()) {
-			   System.out.println(it.next());
-			   i++;
-		   }
+
+//		collection.insertMany(createDB());
+//		
+//		   FindIterable<Document> iterDoc = collection.find();
+//		   int i = 1;
+//		   
+//		   Iterator it = iterDoc.iterator();
+//		   
+//		   while(it.hasNext()) {
+//			   System.out.println(it.next());
+//			   i++;
+//		   }
 
 		
-//		collection.insertMany(arg0);
+
 		
 		mongo.close();
 	}
@@ -89,11 +96,7 @@ public class PokemonMongo {
 	public static List<Document> createDB(){
 		ObjectMapper mapper = new ObjectMapper();
 		List<Document> list = new ArrayList<Document>();
-
-		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");
-
-		
-		
+		File file = new File("C://Users//apbon//Downloads//Happy_JSON.js");		
 		try {
 			List<Pokemon> pokemon = mapper.reader().forType(new TypeReference<List<Pokemon>>() {}).readValue(file);
 			int length = pokemon.size();
@@ -110,9 +113,6 @@ public class PokemonMongo {
 				list.add(document2);
 				
 			}
-
-
-			
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,11 +126,19 @@ public class PokemonMongo {
 			
 		}
 
-		
-		
 		return list;
 	}
 	
+	
+	public static void updateName(MongoCollection<Document> collection, int id, String name) {
+		collection.updateOne(Filters.eq("id", id),Updates.set("name", name));
+	}
+	public static void updateHeight(MongoCollection<Document> collection, int id, double height) {
+		collection.updateOne(Filters.eq("id",id),Updates.set("height", height));
+	}
+	public static void updateWeight(MongoCollection<Document> collection, int id, double weight) {
+		collection.updateOne(Filters.eq("id",id),Updates.set("weight", weight));
+	}
 
 
 }
