@@ -1,4 +1,4 @@
-local list = {1,2,3,4,5,6,7,7,8,99,7,54,3,5,6};
+list = {1,2,3,4,5,6,7,7,8,99,7,54,3,5,6};
 
 local function get(l) do
 	return list[l] or 0;

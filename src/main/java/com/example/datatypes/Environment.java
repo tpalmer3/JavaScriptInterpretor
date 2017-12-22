@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class Environment {
     ArrayList<Object> code;
+    String text;
     HashMap<String, Object> env = new HashMap<>();
     Environment parent;
     String type = "Variable";
@@ -32,6 +33,15 @@ public class Environment {
         }
         this.type = e.getType();
     }
+
+    public Environment(Environment parent, String text) {
+        this.parent = parent;
+        this.text = text;
+    }
+
+    public void setText(String text) {this.text = text;}
+
+    public String getText() {return text;}
 
     public void setCode(ArrayList<Object> code) {this.code = code;}
 
@@ -62,6 +72,7 @@ public class Environment {
                 ret += ",{"+((Environment)o).toString()+"}"+((Environment)o).type;
             else
                 ret += ","+o.toString();
-        return "("+ret.substring(1,ret.length())+")";
+//        return "("+ret.substring(1,ret.length())+")";
+        return "("+ret+")";
     }
 }

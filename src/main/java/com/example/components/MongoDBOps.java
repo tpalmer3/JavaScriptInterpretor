@@ -72,23 +72,23 @@ public class MongoDBOps {
     public static void main(String[] args) {
         MongoDBOps m = new MongoDBOps();
 //        m.login("mongo", "mongo");
-        m.getDatabase("main");
-        m.getCollection("TheAwesomeCollection");
-        Document d = new Document().append("id", 1)
-                .append("description", "database")
-                .append("likes", 100)
-                .append("url", "http://www.tutorialspoint.com/mongodb/")
-                .append("by", "tutorials point");
-        m.collection.insertOne(d);
-
-        FindIterable<Document> iterDoc = m.collection.find();
-        int i = 1;
-
-        Iterator it = iterDoc.iterator();
-
-        while (it.hasNext()) {
-            System.out.println(it.next());
-            i++;
-        }
+//        m.getDatabase("main");
+//        m.getCollection("TheAwesomeCollection");
+//        Document d = new Document().append("id", 1)
+//                .append("description", "database")
+//                .append("likes", 100)
+//                .append("url", "http://www.tutorialspoint.com/mongodb/")
+//                .append("by", "tutorials point");
+//        m.collection.insertOne(d);
+//
+//        FindIterable<Document> iterDoc = m.collection.find();
+//        int i = 1;
+//
+//        Iterator it = iterDoc.iterator();
+//
+//        while (it.hasNext()) {
+//            System.out.println(it.next());
+//            i++;
+//        }
     }
 }

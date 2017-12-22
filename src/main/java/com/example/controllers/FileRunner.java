@@ -28,9 +28,8 @@ public class FileRunner {
         runFileWithReturn(fname);
     }
 
-    @RequestMapping(path="/run_file_with_return/{fname}")
     @JSRunnable
-    public String runFileWithReturn(@PathVariable String fname) {
+    public String loadFile(String fname) {
         File f = new File(fname);
 
         try {
@@ -42,11 +41,7 @@ public class FileRunner {
 
             in.close();
 
-            String out = runner.run(full, false);
-            if(out.equals("undefined"))
-                out = "";
-
-            return out;
+            return full;
         } catch(FileNotFoundException e ) {
             e.printStackTrace();
         } finally {
@@ -54,6 +49,16 @@ public class FileRunner {
         }
 
         return "";
+    }
+
+    @RequestMapping(path="/run_file_with_return/{fname}")
+    @JSRunnable
+    public String runFileWithReturn(@PathVariable String fname) {
+            String out = runner.run(loadFile(fname).replaceAll("local ", ""), false);
+            if(out.equals("undefined"))
+                out = "";
+
+            return out;
     }
 
     @RequestMapping(path="savetest/{fname}")

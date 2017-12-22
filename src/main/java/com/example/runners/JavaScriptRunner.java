@@ -58,6 +58,7 @@ public class JavaScriptRunner implements ScriptRunner{
         this.registerStatic(java.lang.Math.class, "math", false);
         this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
 
+        this.register(com.example.runners.LuaRunner.class, LuaRunner.getRunner(), "lua", true);
         this.register(com.example.runners.LispRunner.class, LispRunner.getRunner(), "lisp", true);
 
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
