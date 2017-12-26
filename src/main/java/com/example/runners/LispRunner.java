@@ -111,7 +111,7 @@ public class LispRunner implements ScriptRunner {
 //        System.out.println(env);
 
         while(!tokens.isEmpty()) {
-            System.out.println("ENV> "+env.toString());
+//            System.out.println("ENV> "+env.toString());
             while (token.equals(""))
                 token = tokens.remove(0);
             if (token instanceof String) {
@@ -195,17 +195,17 @@ public class LispRunner implements ScriptRunner {
                     for (int i = 0; i < parameters.size(); i++) {
                         function.put((String) parameters.get(i), processToken(input));
                     }
-                System.out.println("InFunction> " + token);
+//                System.out.println("InFunction> " + token);
                     ret = processToken(function);
                 }
                 token = "";
             } else {
                 ret = token.toString();
             }
-            System.out.println("Empty> "+tokens.isEmpty());
-
-            for(Object o: tokens)
-                System.out.println("Objects> "+o);
+//            System.out.println("Empty> "+tokens.isEmpty());
+//
+//            for(Object o: tokens)
+//                System.out.println("Objects> "+o);
         }
         if(ret == null)
             ret = "";
