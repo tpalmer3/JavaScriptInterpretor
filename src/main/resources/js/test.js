@@ -5,9 +5,6 @@ var x = "JankyAF";
 x;
 
 //setup base functions
-run = files.runFileWithReturn;
-require = run;
-setInterval = timer.setInterval;
 
 function a() {console.log("goodbye");}
 
@@ -36,4 +33,25 @@ function bubbleSort(list) {
     return list;
 }
 
-web.google("how to tie a tie")
+console.log('hello, world');
+console.log(console.add(1,2);
+var x = 25;
+x;
+math.PI + 2;
+math.E;
+'Hello, World!';
+string.format('%dHello, World!', 23);
+advMath.square(10);
+advMath.sqrt(100);
+advMath.pow(2,3);
+
+stringlib.length('Test');
+stringlib.substring('Testing',1,5);
+stringlib.upper('test');
+stringlib.lower('TEST');
+stringlib.reverse('Test');
+'Test'.split('').reverse().join('');
+'Test'.split('')[2];
+x+2;
+
+//web.google("how to tie a tie")

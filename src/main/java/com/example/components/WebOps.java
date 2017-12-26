@@ -3,6 +3,7 @@ package com.example.components;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.datatypes.SearchResult;
+import com.example.runners.drools.DroolsRunner;
 
 import java.io.*;
 import java.net.URI;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import java.awt.Desktop;
 
@@ -24,13 +24,21 @@ public class WebOps {
 //    Pattern aPattern = Pattern.compile("(<a.+</\\a>)");
     HashMap<Integer, SearchResult> searchResults = new HashMap<>();
 
+    public WebOps() {
+//        try {
+//            DroolsRunner.getRunner().setup("rules.drl");
+//        } catch(FileNotFoundException e) {
+//            System.err.println(e.getCause() + " : " + e.getMessage());
+//        }
+    }
+
     @JSRunnable
     public String readPage(String s) {
         try {
             URL url;
             URLConnection uc;
             StringBuilder parsedContentFromUrl = new StringBuilder();
-            System.out.println("Getting content for URl : " + s);
+//            System.out.println("Getting content for URl : " + s);
             url = new URL(s);
             uc = url.openConnection();
             uc.connect();
@@ -60,12 +68,9 @@ public class WebOps {
         String html = readPage("https://www.google.com/search?q=" + search.substring(0, search.length()-1) + "&ie=utf-8&oe=utf-8&client=firefox-b-1");
         String[] htmWTF = html.substring(15,html.length()).trim().replaceAll("\n", "").replaceAll("\r", "").split("<a href=\"/url\\?q=");
 
-//        System.out.println(html.substring(15,html.length()));
-
         ArrayList<SearchResult> results = new ArrayList<>();
 
         for(int i = 1; i < htmWTF.length; i++) {
-//                System.out.println(htmWTF[i]htmWTF[i]);
             try {
                 String[] u = htmWTF[i].split("\"");
                 if (u.length <= 1 || u[1].substring(0, 5).equals("><img"))
@@ -77,9 +82,11 @@ public class WebOps {
 
                 SearchResult sr = new SearchResult(u[0].split("&amp")[0], t[0].replaceAll("<b>","").replaceAll("</b>", ""), d);
                 results.add(sr);
-//                System.out.println(sr.toString());
+//                DroolsRunner.getRunner().insert(sr);
             } catch(Throwable e) {}
         }
+
+//        DroolsRunner.getRunner().execute();
 
         int count = 1;
         for(SearchResult sr : results) {
@@ -126,30 +133,4 @@ public class WebOps {
             System.err.println(e.getMessage() + " : " + e.getCause());
         }
     }
-
-//    public void xmlParse(String xml, String tag, List<SearchResult> list, Class c) {
-//        System.out.println(xml);
-//        try {
-//            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-//
-//            Element root = doc.getDocumentElement();
-//            NodeList nl = root.getElementsByTagName(tag);
-//            for(int i = 0; i < nl.getLength(); i++) {
-//                Element e = (Element)nl.item(i);
-//                SearchResult sr = new SearchResult(e.getAttribute("href"), e.getTextContent(), "");
-//                list.add(sr);
-//                System.out.println(sr.toString());
-//            }
-//
-//        } catch(ParserConfigurationException e) {
-//            e.printStackTrace();
-//        } catch(IOException e) {
-//            e.printStackTrace();
-//        } catch(SAXException e) {
-//            e.printStackTrace();
-////        }
-//        Matcher m = aPattern.matcher(xml);
-//        while(m.matches())
-//            System.out.println(m.group());
-//    }
 }

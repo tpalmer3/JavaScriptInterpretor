@@ -1,0 +1,12 @@
+package com.example.runners.drools;
+
+import com.example.datatypes.SearchResult;
+
+dialect "mvel"
+
+rule "DIV Result Exclusion"
+    when
+        SearchResult(title.contains("<div"))
+    then
+        SearchResult.setTitle("[deleted]");
+end
