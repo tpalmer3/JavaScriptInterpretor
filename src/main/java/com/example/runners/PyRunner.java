@@ -3,6 +3,10 @@ package com.example.runners;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.controllers.CLI;
+import org.python.antlr.base.mod;
+import org.python.core.CompilerFlags;
+import org.python.core.PythonCodeBundle;
+import org.python.core.PythonCompiler;
 import org.python.util.PythonInterpreter;
 
 @JSComponent
@@ -11,13 +15,17 @@ public class PyRunner implements ScriptRunner {
     private static PyRunner runner = new PyRunner();
     private static PythonInterpreter interpreter = new PythonInterpreter();
 
-    private PyRunner() {}
+    private PyRunner() {
+
+    }
 
     public static PyRunner getRunner() {return runner;}
 
     @Override
     @JSRunnable
     public String run(String input) {
+        if(input.equals("exit()"))
+            System.exit(0);
         interpreter.exec(input);
         return null;//interpreter.eval(input).toString();
     }
