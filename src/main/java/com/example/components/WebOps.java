@@ -25,11 +25,11 @@ public class WebOps {
     HashMap<Integer, SearchResult> searchResults = new HashMap<>();
 
     public WebOps() {
-//        try {
-//            DroolsRunner.getRunner().setup("rules.drl");
-//        } catch(FileNotFoundException e) {
-//            System.err.println(e.getCause() + " : " + e.getMessage());
-//        }
+        try {
+            DroolsRunner.getRunner().setup("rules.drl");
+        } catch(FileNotFoundException e) {
+            System.err.println(e.getCause() + " : " + e.getMessage());
+        }
     }
 
     @JSRunnable
@@ -82,11 +82,11 @@ public class WebOps {
 
                 SearchResult sr = new SearchResult(u[0].split("&amp")[0], t[0].replaceAll("<b>","").replaceAll("</b>", ""), d);
                 results.add(sr);
-//                DroolsRunner.getRunner().insert(sr);
+                DroolsRunner.getRunner().insert(sr);
             } catch(Throwable e) {}
         }
 
-//        DroolsRunner.getRunner().execute();
+        DroolsRunner.getRunner().execute();
 
         int count = 1;
         for(SearchResult sr : results) {

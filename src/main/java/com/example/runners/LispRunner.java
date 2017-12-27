@@ -32,7 +32,7 @@ public class LispRunner implements ScriptRunner {
     public static LispRunner getRunner() {return runner;}
 
     @JSRunnable
-    public void start() {new CLI(getRunner(), "LISP> ").run();}
+    public void start() {new CLI(runner, "LISP> ").run();}
 
     @JSRunnable
     public String runFile(String fname) {return new FileRunner(runner).runFileWithReturn(workingDir+fname);}

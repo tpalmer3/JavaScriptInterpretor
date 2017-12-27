@@ -19,14 +19,15 @@ import java.util.List;
 @JSComponent
 public class DroolsRunner implements ScriptRunner {
 
-    private WorkingMemory mem;
+    private static WorkingMemory mem;
 
-    private KieServices services;
-    private KieFileSystem fs;
-    private KieContainer container;
-    private KieSession session;
+    private static KieServices services;
+    private static KieFileSystem fs;
+    private static KieContainer container;
+    private static KieSession session;
 
-    private String workingDir = System.getProperty("user.dir") + "\\src\\main\\resources\\com\\example\\datatypes\\";
+//    private String workingDir = System.getProperty("user.dir") + "\\src\\main\\resources\\com\\example\\runners\\drools\\";
+    private String workingDir = "\\com\\example\\runners\\drools\\";
 
     private static DroolsRunner runner = new DroolsRunner();
 
@@ -40,17 +41,10 @@ public class DroolsRunner implements ScriptRunner {
     }
 
     @JSRunnable
-    public void setup(String fname) throws FileNotFoundException {
-//        fs.write(ResourceFactory.newFileResource(new File(fname)));
+    public void setup(String rule) throws FileNotFoundException {
+        fs.write(ResourceFactory.newClassPathResource(workingDir+rule));
 
         KieBuilder kieBuilder = services.newKieBuilder(fs).buildAll();
-
-        List<String> rules = Arrays.asList("rules.drl");
-        for(String rule: rules) {
-//            fs.write(ResourceFactory.newClassPathResource(workingDir+rule));
-            fs.write(ResourceFactory.newClassPathResource(getClass().getResource(rule).getFile(), "UTF-8"));
-//            fs.write(ResourceFactory.newClassPathResource(rule));
-        }
 
         if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
             throw new FileNotFoundException();
