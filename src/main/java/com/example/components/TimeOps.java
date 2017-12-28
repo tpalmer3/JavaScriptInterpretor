@@ -28,6 +28,7 @@ public class TimeOps extends Thread{
     public TimeOps() {}
 
     private TimeOps(ScriptRunner runner, String function, String name, String fullName, int mills) {
+        this.runner = runner;
         this.function = function;
         this.name = name;
         this.fullName = fullName;
