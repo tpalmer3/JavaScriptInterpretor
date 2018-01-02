@@ -1,0 +1,1 @@
+(PRINT (UPPER "Setup complete"))

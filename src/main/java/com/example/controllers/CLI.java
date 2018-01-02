@@ -11,7 +11,7 @@ public class CLI {
     private ScriptRunner runner;
     private String tag;
 
-    private static Scanner in;
+    private static Scanner in = new Scanner(System.in);
 
     public static Scanner getScanner() {return in;}
 
@@ -25,7 +25,6 @@ public class CLI {
     public void run() {
         boolean first = true;
         String input = "", output;
-        in = new Scanner(System.in);
 
         if(runner instanceof JavaScriptRunner) {
             System.out.println("Working Directory (variable dir) => " + System.getProperty("user.dir") + "\\src\\main\\resources\\js\\\")");

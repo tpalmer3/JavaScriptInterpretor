@@ -110,6 +110,16 @@ public class Console {
 
     @JSRunnable
     public String add(int a, int b) { return Integer.toString(a+b); }
-    
+
+    @JSRunnable
+    public void run(String cmd) throws IOException {
+        String args[] = cmd.split(" ");
+        Runtime r = Runtime.getRuntime();
+        Process p = r.exec(args);
+//        ProcessBuilder builder = new ProcessBuilder(
+//                "cmd.exe", "/c", cmd);
+//        builder.redirectErrorStream(true);
+//        Process p = builder.start();
+    }
 
 }

@@ -1,1 +1,1 @@
-(DEFUN sqr (x) (* x x))(SET y (+ 25 sqr (5)))(PRINT y)
+(BEGIN (DEFUN sqr (x) (* x x))(SET y (+ 25 sqr (5)))(PRINT y)(PRINT 5)(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))(- 100 x (3))(- 100 z (8))(- 100 x (3)))
