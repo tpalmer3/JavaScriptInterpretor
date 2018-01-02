@@ -6,7 +6,9 @@ dialect "mvel"
 
 rule "DIV Result Exclusion"
     when
-        SearchResult(title.contains("<div"))
+        //$sr : SearchResult(title matches "<div.*>")
+        $sr : SearchResult()
     then
-        SearchResult.setTitle("[deleted]");
+        $sr.setTitle($sr.getTitle().replaceAll("<div.*>", ""));
+        //SearchResult.setTitle("[deleted]");
 end

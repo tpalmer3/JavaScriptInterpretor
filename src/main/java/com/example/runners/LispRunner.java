@@ -32,7 +32,7 @@ public class LispRunner implements ScriptRunner {
     public static LispRunner getRunner() {return runner;}
 
     @JSRunnable
-    public void start() {new CLI(getRunner(), "LISP> ").run();}
+    public void start() {new CLI(runner, "LISP> ").run();}
 
     @JSRunnable
     public String runFile(String fname) {return new FileRunner(runner).runFileWithReturn(workingDir+fname);}
@@ -50,18 +50,20 @@ public class LispRunner implements ScriptRunner {
 
         //Quote Joiner
         for(String s: parse(txt)) {
-            if(flag) {
-                quote += s + " ";
-                if(s.charAt(s.length()-1) == '"') {
-                    tokens.add(quote.substring(1, quote.length()-2));
-                    flag = false;
-                }
-            } else {
-                if(s.charAt(0)=='"') {
-                    quote = s + " ";
-                    flag = true;
+            if(!s.equals("")) {
+                if (flag) {
+                    quote += s + " ";
+                    if (s.charAt(s.length() - 1) == '"') {
+                        tokens.add(quote.substring(1, quote.length() - 2));
+                        flag = false;
+                    }
                 } else {
-                    tokens.add(s);
+                    if (s.charAt(0) == '"') {
+                        quote = s + " ";
+                        flag = true;
+                    } else {
+                        tokens.add(s);
+                    }
                 }
             }
         }
@@ -71,7 +73,7 @@ public class LispRunner implements ScriptRunner {
         String ret = null;
 
         while(!globals.getCode().isEmpty()) {
-            ret = processToken(globals);
+            ret = (String)processToken(globals);
         }
 
         return ret;
@@ -112,9 +114,13 @@ public class LispRunner implements ScriptRunner {
             while (token.equals(""))
                 token = tokens.remove(0);
             if (token instanceof String) {
+
+                Environment function = new Environment();
+                function.setType("Function");
+
                 switch (token.toString().toUpperCase()) {
                     case "BEGIN":
-                        for(int i = 0; i < tokens.size(); i++)
+                        for(int i = 0; i < tokens.size()-1; i++)
                             ret = processToken((Environment)tokens.get(i));
                         while(!tokens.isEmpty())
                             tokens.remove(0);
@@ -126,41 +132,66 @@ public class LispRunner implements ScriptRunner {
                         env.getParent().put(tokens.remove(0).toString(), processToken(env));
                         break;
                     case "DEFUN":
-                        Environment function = new Environment();
-                        function.setType("Function");
                         globals.put(tokens.remove(0).toString(), function);
                         function.setCode(new ArrayList<Object>(Arrays.asList(tokens.remove(0), tokens.remove(0))));
                         break;
                     case "FUN":
-                        Environment functionb = new Environment();
-                        functionb.setType("Function");
-                        env.getParent().put(tokens.remove(0).toString(), functionb);
-                        functionb.setCode(new ArrayList<Object>(Arrays.asList(tokens.remove(0), tokens.remove(0))));
+                        env.getParent().put(tokens.remove(0).toString(), function);
+                        function.setCode(new ArrayList<Object>(Arrays.asList(tokens.remove(0), tokens.remove(0))));
+                        break;
+                    case "MAP":
+                        Environment retE = new Environment(env);
+                        ArrayList<Object> retList = new ArrayList<>();
+
+                        Environment input = (Environment)tokens.remove(0);
+                        Environment params = (Environment)tokens.remove(0);
+                        Environment func = (Environment)tokens.remove(0);
+
+                        for(int i = 0; i < input.getCode().size()-1; i++) {
+                            function = new Environment(env);
+                            Object o = input.getCode().get(i);
+                            if(o instanceof Environment) {
+                                for(int j = 0; j < ((Environment) o).getCode().size()-1; j++) {
+                                    Environment e2 = new Environment(env);
+                                    e2.setCode(new ArrayList<Object>(Arrays.asList(((Environment) o).getCode().get(j))));
+                                    function.put((String)params.getCode().get(i), processToken(e2));
+                                }
+                            } else {
+                                Environment e2 = new Environment(env);
+                                e2.setCode(new ArrayList<Object>(Arrays.asList(o)));
+                                function.put((String)params.getCode().get(i), processToken(e2));
+                            }
+                            function.setCode(func.getCode());
+                            retList.add(processToken(function));
+                        }
+
+                        retE.setCode(retList);
+//                        ret = retE;
                         break;
                     case "PRINT":
                         ret = processToken(env);
                         System.out.println(ret);
                         break;
                     case "UPPER":
-                        ret = processToken(env).toUpperCase();
+                        ret = ((String)processToken(env)).toUpperCase();
                         break;
                     case "LOWER":
-                        ret = processToken(env).toLowerCase();
+                        ret = ((String)processToken(env)).toLowerCase();
                         break;
                     case "EXIT":
                         System.exit(0);
                         break;
                     case "+":
-                        ret = (ret == null) ? String.valueOf(Double.parseDouble(processToken(env))) : String.valueOf(Double.parseDouble(ret) + Double.parseDouble(processToken(env)));
+                        ret = (ret == null) ? String.valueOf(Double.parseDouble(((String)processToken(env)))) : String.valueOf(Double.parseDouble((String)ret) + Double.parseDouble(((String)processToken(env))));
                         break;
                     case "-":
-                        ret = (ret == null) ? String.valueOf(Double.parseDouble(processToken(env))) : String.valueOf(Double.parseDouble(ret) - Double.parseDouble(processToken(env)));
+                        ret = (ret == null) ? String.valueOf(Double.parseDouble(((String)processToken(env)))) : String.valueOf(Double.parseDouble((String)ret) - Double.parseDouble(((String)processToken(env))));
                         break;
                     case "*":
-                        ret = (ret == null) ? String.valueOf(Double.parseDouble(processToken(env))) : String.valueOf(Double.parseDouble(ret) * Double.parseDouble(processToken(env)));
+                        ret = (ret == null) ? String.valueOf(Double.parseDouble(((String)processToken(env)))) : String.valueOf(Double.parseDouble((String)ret) * Double.parseDouble(((String)processToken(env))));
                         break;
                     case "/":
-                        ret = (ret == null) ? String.valueOf(Double.parseDouble(processToken(env))) : String.valueOf(Double.parseDouble(ret) / Double.parseDouble(processToken(env)));
+                        ret = (ret == null) ? String.valueOf(Double.parseDouble(((String)processToken(env)))) : String.valueOf(Double.parseDouble((String)ret) / Double.parseDouble(((String)processToken(env))));
                         break;
                     default:
                         Object s = env.get((String) token);
@@ -205,9 +236,8 @@ public class LispRunner implements ScriptRunner {
     }
 
     public static void main(String args[]) {
-        System.out.println(runner.begin("(BEGIN (PRINT 5)(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3))(- 100 x (3))")); //lisp.begin("(Defun z (y) (+ y 2))(Defun x (y) (* y z (7)))(- 100 x (3)))")
-        System.out.println(runner.begin("(- 100 z (8))"));
-        System.out.println(runner.begin("(- 100 x (3))"));
+        System.out.println(runner.runFile("setup.lisp"));
+        System.out.println(runner.runFile("test.lisp")); //(map (2 3 4) (x) (+ x 2))
         runner.start();
     }
 

@@ -7,6 +7,7 @@ import com.example.annotations.JSRunnable;
 import com.example.components.RedisOps;
 import com.example.components.TimeOps;
 import com.example.controllers.CLI;
+import com.example.controllers.FileRunner;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,9 @@ public class JavaScriptRunner implements ScriptRunner{
 
     private static List<String> ignoring;
 
+    private static FileRunner fr;
+    private static String workingDir = System.getProperty("user.dir") + "\\src\\main\\resources\\js\\";
+
     private JavaScriptRunner() {
         log = Logger.getLogger(JavaScriptRunner.class.getName());
 
@@ -36,7 +40,6 @@ public class JavaScriptRunner implements ScriptRunner{
         ignoring = new ArrayList<>(Arrays.asList("com.example.components.RandomTester",
                 "com.example.components.MongoDBOps"));
 //                "com.example.components.LispOps"));
-
 
         V8Object obj = new V8Object(v8);
         v8.add("system", obj);
@@ -58,8 +61,9 @@ public class JavaScriptRunner implements ScriptRunner{
         this.registerStatic(java.lang.Math.class, "math", false);
         this.register(redis.clients.jedis.Jedis.class, RedisOps.getJedis(), "redis", false);
 
-        this.register(com.example.runners.LuaRunner.class, LuaRunner.getRunner(), "lua", true);
-        this.register(com.example.runners.LispRunner.class, LispRunner.getRunner(), "lisp", true);
+//        this.register(com.example.runners.LuaRunner.class, LuaRunner.getRunner(), "lua", true);
+//        this.register(com.example.runners.LispRunner.class, LispRunner.getRunner(), "lisp", true);
+//        this.register(com.example.runners.PyRunner.class, PyRunner.getRunner(), "python", true);
 
         v8.add("dir", System.getProperty("user.dir")+"\\src\\main\\resources\\");
 
@@ -337,7 +341,17 @@ public class JavaScriptRunner implements ScriptRunner{
         return ret;
     }
 
+    public String runFile(String fname) {
+        if(fr == null)
+            fr =new FileRunner(runner);
+        return fr.runFileWithReturn(workingDir+fname);
+    }
+
     public static Object getVal(String key) {return v8.get(key);}
 
-    public static void main(String args[]) {new CLI(runner, "JS> ").run();}
+    public static void main(String args[]) {
+        runner.runFile("setup.js");
+//        runner.run("setInterval(function a() {python.start();}, 100);",true);
+        new CLI(runner, "JS> ").run();
+    }
 }

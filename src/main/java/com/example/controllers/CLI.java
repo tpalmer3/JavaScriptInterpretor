@@ -11,7 +11,7 @@ public class CLI {
     private ScriptRunner runner;
     private String tag;
 
-    private static Scanner in;
+    private static Scanner in = new Scanner(System.in);
 
     public static Scanner getScanner() {return in;}
 
@@ -25,7 +25,6 @@ public class CLI {
     public void run() {
         boolean first = true;
         String input = "", output;
-        in = new Scanner(System.in);
 
         if(runner instanceof JavaScriptRunner) {
             System.out.println("Working Directory (variable dir) => " + System.getProperty("user.dir") + "\\src\\main\\resources\\js\\\")");
@@ -48,7 +47,7 @@ public class CLI {
             if(balanced(input)) {
                 try {
                     output = runner.run(input);
-                    if (!output.equals("undefined") && !output.equals("nil"))
+                    if (output != null && !output.equals("undefined") && !output.equals("nil"))
                         System.out.println(output);
                 } catch (RuntimeException e) {
                     System.err.print(e.getCause() + " : " + e.getMessage() + "\n______________________________\n");

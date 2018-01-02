@@ -3,6 +3,7 @@ package com.example.controllers;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.runners.JavaScriptRunner;
+import com.example.runners.PyRunner;
 import com.example.runners.ScriptRunner;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,11 +55,11 @@ public class FileRunner {
     @RequestMapping(path="/run_file_with_return/{fname}")
     @JSRunnable
     public String runFileWithReturn(@PathVariable String fname) {
-            String out = runner.run(loadFile(fname).replaceAll("local ", ""), false);
-            if(out.equals("undefined"))
-                out = "";
+        String out = runner.run(loadFile(fname).replaceAll("local ", ""), false);
+        if(out == null || out.equals("undefined"))
+            out = "";
 
-            return out;
+        return out;
     }
 
     @RequestMapping(path="savetest/{fname}")
