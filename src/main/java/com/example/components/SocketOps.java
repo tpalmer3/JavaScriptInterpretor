@@ -42,6 +42,6 @@ public class SocketOps {
     public void stop() throws IOException {
         in.close();
         out.close();
-        clientSocket.close();
+        client.close();
     }
 }
