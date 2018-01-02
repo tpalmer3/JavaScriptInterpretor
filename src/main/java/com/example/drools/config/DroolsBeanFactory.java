@@ -100,8 +100,8 @@ public class DroolsBeanFactory {
 
         DecisionTableProviderImpl decisionTableProvider = new DecisionTableProviderImpl();
 
-        String drl = decisionTableProvider.loadFromResource(dt, null);
-
+//        String drl = decisionTableProvider.loadFromResource(dt, null);
+        String drl = "";
         return drl;
     }
 
