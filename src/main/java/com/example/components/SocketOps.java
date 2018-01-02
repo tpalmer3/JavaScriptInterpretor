@@ -1,10 +1,12 @@
 package com.example.components;
 
+import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 
 import java.net.*;
 import java.io.*;
 
+@JSComponent(name="socket")
 public class SocketOps {
     private Socket client;
     private PrintWriter out;
