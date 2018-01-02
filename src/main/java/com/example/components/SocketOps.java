@@ -6,7 +6,7 @@ import java.net.*;
 import java.io.*;
 
 public class SocketOps {
-    private Socket clientSocket;
+    private Socket client;
     private PrintWriter out;
     private BufferedReader in;
 
@@ -15,7 +15,7 @@ public class SocketOps {
 
     @JSRunnable
     public void start(String ip, int port) throws IOException {
-        Socket client = new Socket(ip, port);
+        client = new Socket(ip, port);
         System.out.println("got connection on port " + port);
         in = new BufferedReader(new InputStreamReader(client.getInputStream()));
         out = new PrintWriter(client.getOutputStream(),true);
