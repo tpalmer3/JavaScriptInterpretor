@@ -22,7 +22,7 @@ public class Console {
 
     static {
         in = CLI.getScanner();
-        configureVoiceRecognition();
+//        configureVoiceRecognition();
     }
 
     private static void configureVoiceRecognition() {

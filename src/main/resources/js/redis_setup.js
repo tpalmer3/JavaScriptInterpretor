@@ -13,6 +13,6 @@
 //redis.expire_byte               = redis_fix.expire_byte;
 //redis.ttl                       = redis_fix.ttl;
 
-lua = redis.eval;
+//lua = redis.eval;
 
 console.log("Redis Setup Complete");

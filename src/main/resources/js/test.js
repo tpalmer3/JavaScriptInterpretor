@@ -54,4 +54,4 @@ stringlib.reverse('Test');
 'Test'.split('')[2];
 x+2;
 
-web.google("how to tie a tie")
+//web.google("how to tie a tie")

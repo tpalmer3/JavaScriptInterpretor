@@ -8,18 +8,22 @@ import com.example.annotations.JSRunnable;
 public class ComparisonOps {
 
 	@JSRunnable
-	public int findMax(V8Array a) {
-		int[] list = a.getIntegers(0, a.length()-1);
-		int max = 0;
-		for(int l: list) {
-			if(l > max)
-				max = l;
-		}
-		return max;
+	public int findMax(Integer... a) {
+		Integer ret = a[0];
+		for(Integer i: a)
+			if(ret < i)
+				ret = i;
+
+		return ret;
 	}
 	@JSRunnable
-	public int findMin(int... a) {
-		return 1;
+	public int findMin(Integer... a) {
+		Integer ret = a[0];
+		for(Integer i: a)
+			if(ret > i)
+				ret = i;
+
+		return ret;
 	}
 
 }

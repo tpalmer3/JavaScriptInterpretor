@@ -3,6 +3,7 @@ package com.example.components;
 import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import com.example.datatypes.SearchResult;
+import com.example.runners.drools.DroolsRunner;
 
 import java.io.*;
 import java.net.URI;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import java.awt.Desktop;
 
@@ -24,13 +24,21 @@ public class WebOps {
 //    Pattern aPattern = Pattern.compile("(<a.+</\\a>)");
     HashMap<Integer, SearchResult> searchResults = new HashMap<>();
 
+    public WebOps() {
+//        try {
+//            DroolsRunner.getRunner().setup("rules.drl");
+//        } catch(FileNotFoundException e) {
+//            System.err.println(e.getCause() + " : " + e.getMessage());
+//        }
+    }
+
     @JSRunnable
     public String readPage(String s) {
         try {
             URL url;
             URLConnection uc;
             StringBuilder parsedContentFromUrl = new StringBuilder();
-            System.out.println("Getting content for URl : " + s);
+//            System.out.println("Getting content for URl : " + s);
             url = new URL(s);
             uc = url.openConnection();
             uc.connect();
@@ -74,8 +82,11 @@ public class WebOps {
 
                 SearchResult sr = new SearchResult(u[0].split("&amp")[0], t[0].replaceAll("<b>","").replaceAll("</b>", ""), d);
                 results.add(sr);
+//                DroolsRunner.getRunner().insert(sr);
             } catch(Throwable e) {}
         }
+
+//        DroolsRunner.getRunner().execute();
 
         int count = 1;
         for(SearchResult sr : results) {

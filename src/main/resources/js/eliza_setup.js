@@ -9,7 +9,7 @@ bot.elizaQuits.push("sleep");
 bot.elizaKeywords.push (
 		["search", 0, [
 		 ["*", [
-		     "I  found these results: \r\n" + web.google("How to tie a tie")
+		     "I  found these results: \r\n"// + web.google("How to tie a tie")
 		  ]]
 		]]);
 bot._init();
