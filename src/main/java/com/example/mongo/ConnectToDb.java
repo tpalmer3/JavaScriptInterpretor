@@ -1,5 +1,7 @@
 package com.example.mongo;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -26,8 +28,18 @@ public class ConnectToDb {
 		log = Logger.getLogger(ConnectToDb.class.getName());
 		// Creating a Mongo client 
 		
+		InetAddress ip;
+		String ipAddress = "";
+		try {
+			ip = InetAddress.getLocalHost();
+			ipAddress = ip.getHostAddress();
+			log.info(ipAddress);
+			
+		}catch(UnknownHostException e) {
+			log.warning(e.getMessage());
+		}
 		
-		MongoClient mongo = new MongoClient(new ServerAddress("192.168.99.100", 27017), new MongoClientOptions.Builder().build());
+		MongoClient mongo = new MongoClient(new ServerAddress(ipAddress, 27017), new MongoClientOptions.Builder().build());
 
 		// Creating Credentials 
 		MongoCredential credential; 
@@ -48,34 +60,12 @@ public class ConnectToDb {
 	    MongoCollection<Document> collection = database.getCollection("sampleCollection");
 	    log.info("Collection samepleCollect selected successfully");
 		
-//	    Document document = new Document("title", "MongoDB")
-//	    		.append("id", 1)
-//	    		.append("description", "database")
-//	    		.append("likes", 100)
-//	    		.append("url", "http://www.tutorialspoint.com/mongodb/")
-//	    		.append("by", "tutorials point");
-//	    collection.insertOne(document);
-//	   log.info("Document inserted successfully");
-//	    
-//	    collection.updateOne(Filters.eq("id", 1), Updates.set("likes", 150));
-//	    log.info("Document update successfully...");
-//	    
-//	    collection.deleteOne(Filters.eq("id",1));
-//	    log.info("Document deleted successfully");
 	    
 //	   MongoCollection<Document> collection2 = database.getCollection("sampleCollection2");
 //	   collection2.drop();
 //	   log.info("Collection successfully dropped...");
 	   
-	   FindIterable<Document> iterDoc = collection.find();
-	   int i = 1;
-	   
-	   Iterator it = iterDoc.iterator();
-	   
-	   while(it.hasNext()) {
-		   System.out.println(it.next());
-		   i++;
-	   }
+
 	   
 	   mongo.close();
 

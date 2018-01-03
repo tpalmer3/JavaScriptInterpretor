@@ -168,6 +168,7 @@
     <version>2.0.2</version>
 </dependency>
 <dependency>
+			<groupId>org.drools</groupId>
 			<artifactId>drools-core</artifactId>
 			<version>7.4.1.Final</version>
 		</dependency>
