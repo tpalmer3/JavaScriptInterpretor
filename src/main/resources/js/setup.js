@@ -3,6 +3,7 @@ run = files.runFileWithReturn;
 require = run;
 exit = system.exit;
 setInterval = timer.setInterval;
+sock = socket
 
 function setup(home) {
     dir = home;
