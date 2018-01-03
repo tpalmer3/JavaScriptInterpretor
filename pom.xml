@@ -92,17 +92,17 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>edu.cmu.sphinx</groupId>
-			<artifactId>sphinx4-core</artifactId>
-			<version>5prealpha-SNAPSHOT</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>edu.cmu.sphinx</groupId>-->
+			<!--<artifactId>sphinx4-core</artifactId>-->
+			<!--<version>5prealpha-SNAPSHOT</version>-->
+		<!--</dependency>-->
 
-		<dependency>
-			<groupId>edu.cmu.sphinx</groupId>
-			<artifactId>sphinx4-data</artifactId>
-			<version>5prealpha-SNAPSHOT</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>edu.cmu.sphinx</groupId>-->
+			<!--<artifactId>sphinx4-data</artifactId>-->
+			<!--<version>5prealpha-SNAPSHOT</version>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.luaj</groupId>
@@ -146,6 +146,18 @@
 			<groupId>org.python</groupId>
 			<artifactId>jython-standalone</artifactId>
 			<version>2.7.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jruby</groupId>
+			<artifactId>jruby-complete</artifactId>
+			<version>9.1.15.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>4.10.0.201712302008-r</version>
 		</dependency>
 
 	</dependencies>

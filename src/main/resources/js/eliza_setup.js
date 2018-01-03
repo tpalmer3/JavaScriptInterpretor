@@ -11,11 +11,20 @@ bot.elizaKeywords.push (
 		     "I  found these results: \r\n"// + web.google("How to tie a tie")
 		  ]]
 		]]);
-bot._init();
-bot.reset();
+//bot._init();
+//bot.reset();
 
-function run_eliza() {
-    console.print(" ELIZA> " + elizabot.start());
+function run_eliza_with_audio() {
+    console.run("python C:\\Users\\t\\Desktop\\JavaScriptInterpretor\\src\\main\\resources\\python\\tts.py");
+    sock.connect("127.0.0.1", 5462);
+    run_eliza(sock);
+    sock.send("exit");
+    sock.stop();
+}
+
+function run_eliza(output) {
+
+    eliza_print(elizabot.start(), output);
 
     var running = true;
     while(running) {
@@ -23,10 +32,16 @@ function run_eliza() {
         if(bot.elizaQuits.indexOf(rep) >= 0) {
             running = false;
         } else
-            console.print(" ELIZA> " + elizabot.reply(rep));
+            eliza_print(elizabot.reply(rep), output);
     }
 
-    console.print(" ELIZA> " + elizabot.bye());
+    eliza_print(elizabot.bye(), output);
+}
+
+function eliza_print(str, output) {
+    if(typeof output !== "undefined")
+        output.send(str);
+    console.print(" ELIZA> " + str);
 }
 
 console.log("Eliza Setup Complete")

@@ -15,4 +15,4 @@
 
 //lua = redis.eval;
 
-console.log("Redis Setup Complete");
+//console.log("Redis Setup Complete");
