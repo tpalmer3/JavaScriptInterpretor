@@ -1,9 +1,15 @@
 package com.example.controllers;
 
+import com.example.components.Console;
 import com.example.runners.JavaScriptRunner;
 import com.example.runners.LispRunner;
+import com.example.runners.PyRunner;
 import com.example.runners.ScriptRunner;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class CLI {
@@ -11,9 +17,17 @@ public class CLI {
     private ScriptRunner runner;
     private String tag;
 
+    private LinkedList<String> history = new LinkedList<>();
+
     private static Scanner in = new Scanner(System.in);
 
     public static Scanner getScanner() {return in;}
+
+    public static void setScanner(Scanner s) {
+        in.close();
+        in = s;
+        Console.setIn(s);
+    }
 
     public CLI() {}
 
@@ -41,8 +55,10 @@ public class CLI {
                 System.out.print(".. ");
             first = false;
 
-            input += " " + in.nextLine().trim();
+            input += " " + in.next().trim();
             input = input.trim();
+
+            addToHistory(input);
 
             if(balanced(input)) {
                 try {
@@ -58,6 +74,12 @@ public class CLI {
                 input = "";
             }
         }
+    }
+
+    private void addToHistory(String s) {
+        history.add(s);
+        if(history.size() > 500)
+            history.remove(history.size()-1);
     }
 
     private boolean balanced(String s) {
@@ -86,6 +108,9 @@ public class CLI {
                 squote_flag = true;
             }
         }
+        if(runner instanceof PyRunner)
+            if(s.charAt(0) == '\t' || s.charAt(s.length()-1) == ':')
+                count = 1;
         return (count<=0);
     }
 }

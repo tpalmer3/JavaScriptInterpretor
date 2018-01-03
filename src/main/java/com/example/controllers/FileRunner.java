@@ -23,7 +23,6 @@ public class FileRunner {
 
     public FileRunner(ScriptRunner runner) {this.runner = runner;}
 
-    @RequestMapping(path="/run_file/{fname}")
     @JSRunnable
     public void runFile(@PathVariable String fname) {
         runFileWithReturn(fname);
@@ -52,7 +51,6 @@ public class FileRunner {
         return "";
     }
 
-    @RequestMapping(path="/run_file_with_return/{fname}")
     @JSRunnable
     public String runFileWithReturn(@PathVariable String fname) {
         String out = runner.run(loadFile(fname).replaceAll("local ", ""), false);
@@ -62,7 +60,6 @@ public class FileRunner {
         return out;
     }
 
-    @RequestMapping(path="savetest/{fname}")
     public void saveTest(@PathVariable String fname, @RequestParam String text) {
         System.out.println("SaveTestInit");
         File f = new File(fname+".js");
@@ -81,7 +78,6 @@ public class FileRunner {
         }
     }
 
-    @RequestMapping(path="/save_file/{fname}",method= RequestMethod.POST)
     public void saveFile(@PathVariable String fname, @RequestBody String text) {
         File f = new File(fname+".js");
         try {
