@@ -34,7 +34,7 @@ public class SocketOps {
     }
 
     @JSRunnable
-    public String sendWithReturh(String msg) throws IOException {
+    public String sendWithReturn(String msg) throws IOException {
         out.println(msg);
         String resp = in.readLine();
         return resp;
