@@ -55,7 +55,7 @@ public class CLI {
                 System.out.print(".. ");
             first = false;
 
-            input += " " + in.next().trim();
+            input += " " + in.nextLine().trim();
             input = input.trim();
 
             addToHistory(input);
