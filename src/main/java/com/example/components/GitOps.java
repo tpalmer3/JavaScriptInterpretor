@@ -64,7 +64,7 @@ public class GitOps{
 
     @JSRunnable
     public void push(String origin) throws GitAPIException {
-        git.push().setRemote(origin).call();
+        git.push().call();//.setRemote(origin).call();
     }
 
     @JSRunnable
