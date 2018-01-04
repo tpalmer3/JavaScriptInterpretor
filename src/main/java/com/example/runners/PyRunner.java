@@ -26,8 +26,7 @@ public class PyRunner implements ScriptRunner {
         runner.runFile("setup.py");
     }
 
-    private PyRunner() {
-    }
+    private PyRunner() {}
 
     public static PyRunner getRunner() {return runner;}
 

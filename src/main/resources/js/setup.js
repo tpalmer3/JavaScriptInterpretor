@@ -3,7 +3,9 @@ run = files.runFileWithReturn;
 require = run;
 exit = system.exit;
 setInterval = timer.setInterval;
-sock = socket
+sock = socket;
+
+git.setDirectory("");
 
 function setup(home) {
     dir = home;
