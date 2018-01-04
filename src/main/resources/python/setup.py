@@ -1,9 +1,11 @@
 from com.example.components import Console
+from com.example.components import GitOps
 from com.example.components import RedisOps
 from com.example.components import SocketOps
 from com.example.components import WebOps
 
 console = Console()
+git = GitOps()
 redis = RedisOps()
 sock = SocketOps()
 web = WebOps()
@@ -13,3 +15,5 @@ web = WebOps()
 #sock.send("Please Andrew, dont die! For the love of all that is good in this world, you had better not die on me!")
 #sock.send("exit")
 #sock.stop()
+
+git.setDirectory("")
