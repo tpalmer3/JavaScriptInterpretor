@@ -4,6 +4,7 @@ import com.example.annotations.JSComponent;
 import com.example.annotations.JSRunnable;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +14,18 @@ public class GitOps{
 
     private Git git;
 
+    private String username = "";
+    private String password = "";
+
+    @JSRunnable
+    public void login(String username, String password) throws GitAPIException {
+        this.username = username;
+        this.password = password;
+    }
+
     @JSRunnable
     public void clone(String dir, String g) throws GitAPIException {
-        git = Git.cloneRepository().setURI(g).setDirectory(new File(dir)).call();
+        git = Git.cloneRepository().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).setURI(g).setDirectory(new File(dir)).call();
     }
 
     @JSRunnable
@@ -63,13 +73,13 @@ public class GitOps{
     }
 
     @JSRunnable
-    public void push(String origin) throws GitAPIException {
-        git.push().call();//.setRemote(origin).call();
+    public void push() throws GitAPIException {
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();//.setRemote(origin).call();
     }
 
     @JSRunnable
     public void pull(String origin) throws GitAPIException {
-        git.pull().setRemote(origin).call();
+        git.pull().setRemote(origin).setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
     }
 
 }
