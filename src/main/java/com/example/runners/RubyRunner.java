@@ -17,15 +17,18 @@ public class RubyRunner implements ScriptRunner {
 
     static {
         System.out.println("Ruby Setup Started");
-        fileRunner.runFile(dir+"setup.rb");
+        runner.runFile("setup.rb");
+//        runner.runFile("test.rb");
         System.out.println("Ruby Setup Complete");
     }
 
     private RubyRunner() {}
 
+    public static RubyRunner getRunner() {return runner;}
+
     @Override
     public String run(String input) {
-        if(input.equals("exit()"))
+        if(input.trim().equals("exit()"))
             System.exit(0);
         try {
             return ruby.runScriptlet(input).toString();
@@ -36,6 +39,10 @@ public class RubyRunner implements ScriptRunner {
     @Override
     public String run(String input, boolean b) {
         return run(input);
+    }
+
+    public String runFile(String fname) {
+        return fileRunner.runFileWithReturn(dir+fname);
     }
 
     public static void main(String args[]) {
