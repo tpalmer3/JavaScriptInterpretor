@@ -23,6 +23,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 	</properties>
+	
+	
+	
+	
+	
 
 <!--  -	<dependencyManagement>
 		<dependencies>
@@ -88,6 +93,14 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
+	<dependency>
+		<groupId>com.github.javafaker</groupId>
+		<artifactId>javafaker</artifactId>
+		<version>0.14</version>
+	</dependency>
+    
 
 		
 		<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
