@@ -1,14 +1,8 @@
 package com.example.controllers;
 
 import com.example.components.Console;
-import com.example.runners.JavaScriptRunner;
-import com.example.runners.LispRunner;
-import com.example.runners.PyRunner;
-import com.example.runners.ScriptRunner;
+import com.example.runners.*;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -55,8 +49,12 @@ public class CLI {
                 System.out.print(".. ");
             first = false;
 
-            input += " " + in.nextLine().trim();
-            input = input.trim();
+            if(!(runner instanceof RubyRunner)) {
+                input += " " + in.nextLine().trim();
+                input = input.trim();
+            } else {
+                input += " " + in.nextLine().trim() + "\n";
+            }
 
             addToHistory(input);
 
@@ -66,6 +64,7 @@ public class CLI {
                     if (output != null && !output.equals("undefined") && !output.equals("nil"))
                         System.out.println(output);
                 } catch (RuntimeException e) {
+                    System.err.println("Problem with line -> " + input);
                     System.err.print(e.getCause() + " : " + e.getMessage() + "\n______________________________\n");
                     for(StackTraceElement ste : e.getStackTrace())
                         System.err.println(ste.toString());
@@ -108,9 +107,18 @@ public class CLI {
                 squote_flag = true;
             }
         }
-        if(runner instanceof PyRunner)
-            if(s.charAt(0) == '\t' || s.charAt(s.length()-1) == ':')
+        if(runner instanceof PyRunner) {
+            if (s.charAt(0) == '\t' || s.charAt(s.length() - 1) == ':')
                 count = 1;
+        } else if(runner instanceof RubyRunner) {
+            for(String word : s.replaceAll("\n", "").replaceAll("\r", "").split(" ")) {
+                if (word.equals("def") || word.equals("if") || word.equals("class") || word.equals("while") || word.equals("for") || word.equals("case")) {
+                    count += 1;
+                } else if (word.equals("end")) {
+                    count -= 1;
+                }
+            }
+         }
         return (count<=0);
     }
 }

@@ -44,14 +44,15 @@ public class DroolsRunner implements ScriptRunner {
     public void setup(String rule) throws FileNotFoundException {
         fs.write(ResourceFactory.newClassPathResource(workingDir+rule));
 
-        KieBuilder kieBuilder = services.newKieBuilder(fs).buildAll();
+        KieBuilder kieBuilder = services.newKieBuilder(fs);//.buildAll();
 
-        if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
+        if (kieBuilder.getResults() == null || kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
             throw new FileNotFoundException();
         }
 
         container = services.newKieContainer(services.getRepository().getDefaultReleaseId());
         session = container.newKieSession();
+        System.out.println("Session Setup> " + session);
     }
 
     public void insert(Object o) {
@@ -61,7 +62,9 @@ public class DroolsRunner implements ScriptRunner {
 
     @JSRunnable
     public void execute() {
+        System.out.println("Session> " + session);
         session.fireAllRules();
+        System.out.println("Session> " + session);
     }
 
     @JSRunnable

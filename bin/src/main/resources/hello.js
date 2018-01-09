@@ -1,6 +1,5 @@
-/**
- * 
- */
+:bin/src/main/resources/hello.js
+
 
 
 
@@ -19,8 +18,10 @@ function fillArray(x){
 }
 var myVar = fillArray(4);
 myVar;
+<<<<<<< HEAD:bin/src/main/resources/hello.js
 
 
 
 console.log("sort function added from hello.js")
+
 

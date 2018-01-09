@@ -86,12 +86,20 @@ public class WebOps {
             } catch(Throwable e) {}
         }
 
+//        for(SearchResult sr : results) {
+//            System.out.println("1.) " + (sr != null ? sr.getTitle() : null));
+//        }
+
+//        System.out.println("after 1, before drools");
 //        DroolsRunner.getRunner().execute();
+//        System.out.println("after drools, before 2");
 
         int count = 1;
         for(SearchResult sr : results) {
+//            System.out.println("2.) " + (sr != null ? sr.getTitle() : null));
             searchResults.put(count++, sr);
         }
+//        System.out.println("after 2");
 
         return printResults();
     }
