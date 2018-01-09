@@ -1,6 +1,6 @@
 package com.example.drools.config;
 
-import org.drools.decisiontable.DecisionTableProviderImpl;
+//import org.drools.decisiontable.DecisionTableProviderImpl;
 import org.kie.api.KieServices;
 import org.kie.api.builder.*;
 import org.kie.api.io.Resource;
@@ -98,11 +98,11 @@ public class DroolsBeanFactory {
 
         Resource dt = ResourceFactory.newClassPathResource(excelFile, getClass());
 
-        DecisionTableProviderImpl decisionTableProvider = new DecisionTableProviderImpl();
+//        DecisionTableProviderImpl decisionTableProvider = new DecisionTableProviderImpl();
+//
+//        String drl = decisionTableProvider.loadFromResource(dt, null);
 
-        String drl = decisionTableProvider.loadFromResource(dt, null);
-
-        return drl;
+        return "";//drl;
     }
 
 }

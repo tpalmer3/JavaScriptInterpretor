@@ -15,10 +15,8 @@ import com.mongodb.client.MongoDatabase;
 
 public class RandomValueGenerator {
 
-	
 	private static Logger log;
-	
-	
+
 	public static void run() {
 		log = Logger.getLogger(RandomValueGenerator.class.getName());
 		MongoClient mongo = getClient();
@@ -28,7 +26,6 @@ public class RandomValueGenerator {
 		MongoCollection<Document> collection = database.getCollection("Test");
 		collection.insertOne(populateDatabase());
 		log.info(collection.toString());
-		
 	}
 	
 	public static Document populateDatabase() {
@@ -46,12 +43,9 @@ public class RandomValueGenerator {
 		document.put("Age", age);
 		document.put("Living State", state);
 		document.put("Balance", balance);
-		
-		
-		
+
 		return document;
 	}
-	
 	
 	public static String getState() {
 		String[] states = {"AL", "AK", "AZ", "AR", "CA", "CO","CT","DE","FL","GA","HI","ID","IL"
@@ -66,9 +60,8 @@ public class RandomValueGenerator {
 	public static MongoClient getClient() {
 		return new MongoClient(new ServerAddress("192.168.99.100", 27017), new MongoClientOptions.Builder().build());
 	}
+
 	public static void main(String[] args) {
 		RandomValueGenerator.run();
 	}
-	
-	
 }

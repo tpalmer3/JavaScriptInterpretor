@@ -14,12 +14,12 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class ConnectToDb {
+public class Connection {
 
 	private static Logger log;
 
 	public static void main(String[] args) {
-		log = Logger.getLogger(ConnectToDb.class.getName());
+		log = Logger.getLogger(Connection.class.getName());
 		// Creating a Mongo client
 
 		InetAddress ip;
