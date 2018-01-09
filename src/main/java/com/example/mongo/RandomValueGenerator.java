@@ -50,6 +50,8 @@ public class RandomValueGenerator extends TimerTask {
 	public static Document populateDatabase() {
 		log.info("In the populateDatabase method");
 		Faker faker = new Faker();
+		
+		
 		Random random = new Random();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
